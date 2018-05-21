@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.user.emilia">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".ForgetAccountPasswordActivity" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".SettingEmailActivity" />
+        <activity android:name=".SettingNameActivity" />
+        <activity android:name=".SettingDobActivity" />
+        <activity android:name=".SettingPasswordActivity" />
+        <activity android:name=".SettingDeleteActivity" />
+        <activity android:name=".DeviceUnlockActivity" />
+        <activity android:name=".DeviceHistoryActivity" />
+        <activity android:name=".DeviceEditActivity" />
+        <activity android:name=".DeviceEditNameActivity" />
+        <activity android:name=".DeviceEditPasswordActivity" />
+        <activity android:name=".DeviceEditDeleteActivity" />
+        <activity android:name=".DeviceEditSecondaryAccessActivity" />
+        <activity android:name=".DeviceAddActivity" />
+        <activity android:name=".DeviceAddSecondaryActivity" />
+        <activity android:name=".AdminAddAdminActivity" />
+        <activity android:name=".AdminAddDeviceActivity" />
+        <activity android:name=".AdminResetPasswordDeviceActivity" />
+        <activity android:name=".AdminDeviceRegisteredActivity"></activity>
+    </application>
+
+</manifest>
