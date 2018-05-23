@@ -30,11 +30,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ma=this;
 
-        adminLevel = true;
+        adminLevel = false;
 
         btnAdd = findViewById(R.id.btnAdd_main);
         btnRegistered = findViewById(R.id.btnRegistered_main);
-        btnRegistered.setVisibility(View.GONE);
+        if(adminLevel==false){
+            btnRegistered.setVisibility(View.GONE);
+        }
 
         mSectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
 
@@ -56,20 +58,20 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(i);
                             }
                         });
+                        btnRegistered.setVisibility(View.VISIBLE);
+                        btnRegistered.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent i = new Intent(getApplicationContext(), AdminDeviceRegisteredActivity.class);
+                                startActivity(i);
+                            }
+                        });
                     }
                     if (tabPosition==1){
                         btnAdd.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent i = new Intent(getApplicationContext(), AdminAddAdminActivity.class);
-                                startActivity(i);
-                            }
-                        });
-                        btnRegistered.setVisibility(View.VISIBLE);
-                        btnRegistered.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent i = new Intent(getApplicationContext(), AdminDeviceRegisteredActivity.class);
                                 startActivity(i);
                             }
                         });
@@ -99,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 int tabPosition = tabLayout.getSelectedTabPosition();
-                if (adminLevel==true && tabPosition==1){
+                if (adminLevel==true && tabPosition==0){
                     btnRegistered.setVisibility(View.GONE);
                 }
             }
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             adapter.addFragment(new FragmentAdminDevice(), "Device");
             adapter.addFragment(new FragmentAdminAdminList(), "Admins");
         }else{
-            adapter.addFragment(new FragmentDevicePrimary(), "Primarys");
+            adapter.addFragment(new FragmentDevicePrimary(), "Primary");
             adapter.addFragment(new FragmentDeviceSecondary(), "Secondary");
         }
         viewPager.setAdapter(adapter);
