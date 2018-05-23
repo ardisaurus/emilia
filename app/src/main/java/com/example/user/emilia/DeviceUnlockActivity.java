@@ -9,5 +9,6 @@ public class DeviceUnlockActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_unlock);
+        setTitle("Unlock : Primary Access");
     }
 }

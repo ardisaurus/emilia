@@ -9,5 +9,6 @@ public class SettingNameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_name);
+        setTitle("Setting : Name");
     }
 }

@@ -24,7 +24,8 @@ public class FragmentAdminDevice extends Fragment {
     private RecyclerView.Adapter mAdapter;
 
     private List<AdminDevice> mAdminDevice = new ArrayList<>();
-    AdminDevice device;
+
+    private AdminDevice device;
 
     @Nullable
     @Override
@@ -34,7 +35,7 @@ public class FragmentAdminDevice extends Fragment {
         mLayoutManager = new LinearLayoutManager(MainActivity.ma);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        device = new AdminDevice("bk803");
+        device = new AdminDevice("bk805");
         mAdminDevice.add(device);
         device = new AdminDevice("ae342");
         mAdminDevice.add(device);

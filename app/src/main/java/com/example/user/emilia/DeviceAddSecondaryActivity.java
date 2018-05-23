@@ -9,5 +9,6 @@ public class DeviceAddSecondaryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_add_secondary);
+        setTitle("Add Device : Secondary Access");
     }
 }

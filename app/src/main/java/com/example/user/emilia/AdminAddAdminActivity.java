@@ -9,5 +9,6 @@ public class AdminAddAdminActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_add_admin);
+        setTitle("Add Admin");
     }
 }

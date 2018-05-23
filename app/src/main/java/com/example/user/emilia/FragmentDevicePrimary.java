@@ -24,7 +24,7 @@ public class FragmentDevicePrimary extends Fragment {
     private RecyclerView.Adapter mAdapter;
 
     private List<PrimaryDevice> mPrimaryDevice = new ArrayList<>();
-    PrimaryDevice device;
+    private PrimaryDevice device;
 
     @Nullable
     @Override

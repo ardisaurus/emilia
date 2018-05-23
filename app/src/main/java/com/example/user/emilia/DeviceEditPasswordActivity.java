@@ -9,5 +9,6 @@ public class DeviceEditPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_edit_password);
+        setTitle("Edit Device : Password");
     }
 }

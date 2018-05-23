@@ -37,7 +37,8 @@
         <activity android:name=".AdminAddAdminActivity" />
         <activity android:name=".AdminAddDeviceActivity" />
         <activity android:name=".AdminResetPasswordDeviceActivity" />
-        <activity android:name=".AdminDeviceRegisteredActivity"></activity>
+        <activity android:name=".AdminDeviceRegisteredActivity" />
+        <activity android:name=".DeviceUnlockSecondaryActivity" />
     </application>
 
 </manifest>

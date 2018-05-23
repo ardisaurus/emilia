@@ -25,7 +25,7 @@ public class FragmentAdminAdminList extends Fragment {
     private RecyclerView.Adapter mAdapter;
 
     private List<Admin> mAdmin = new ArrayList<>();
-    Admin admin;
+    private Admin admin;
 
     @Nullable
     @Override

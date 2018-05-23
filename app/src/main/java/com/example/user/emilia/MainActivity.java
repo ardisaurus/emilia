@@ -1,12 +1,15 @@
 package com.example.user.emilia;
 
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.user.emilia.adapter.SectionPageAdapter;
@@ -17,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SectionPageAdapter mSectionPageAdapter;
     private ViewPager mViewPager;
+    private FloatingActionButton btnAdd, btnRegistered;
 
     private Boolean adminLevel;
 
@@ -28,14 +32,83 @@ public class MainActivity extends AppCompatActivity {
 
         adminLevel = true;
 
+        btnAdd = findViewById(R.id.btnAdd_main);
+        btnRegistered = findViewById(R.id.btnRegistered_main);
+        btnRegistered.setVisibility(View.GONE);
+
         mSectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.container1);
         setupViewPager(mViewPager, adminLevel);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager, adminLevel);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int tabPosition = tabLayout.getSelectedTabPosition();
+                if (adminLevel==true){
+                    if (tabPosition==0){
+                        btnAdd.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent i = new Intent(getApplicationContext(), AdminAddDeviceActivity.class);
+                                startActivity(i);
+                            }
+                        });
+                    }
+                    if (tabPosition==1){
+                        btnAdd.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent i = new Intent(getApplicationContext(), AdminAddAdminActivity.class);
+                                startActivity(i);
+                            }
+                        });
+                        btnRegistered.setVisibility(View.VISIBLE);
+                        btnRegistered.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent i = new Intent(getApplicationContext(), AdminDeviceRegisteredActivity.class);
+                                startActivity(i);
+                            }
+                        });
+                    }
+                }else{
+                    if (tabPosition==0){
+                        btnAdd.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent i = new Intent(getApplicationContext(), DeviceAddActivity.class);
+                                startActivity(i);
+                            }
+                        });
+                    }
+                    if (tabPosition==1){
+                        btnAdd.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent i = new Intent(getApplicationContext(), DeviceAddSecondaryActivity.class);
+                                startActivity(i);
+                            }
+                        });
+                    }
+                }
+            }
 
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                int tabPosition = tabLayout.getSelectedTabPosition();
+                if (adminLevel==true && tabPosition==1){
+                    btnRegistered.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     private void setupViewPager(ViewPager viewPager, Boolean adminLevel){
@@ -44,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             adapter.addFragment(new FragmentAdminDevice(), "Device");
             adapter.addFragment(new FragmentAdminAdminList(), "Admins");
         }else{
-            adapter.addFragment(new FragmentDevicePrimary(), "Primary");
+            adapter.addFragment(new FragmentDevicePrimary(), "Primarys");
             adapter.addFragment(new FragmentDeviceSecondary(), "Secondary");
         }
         viewPager.setAdapter(adapter);

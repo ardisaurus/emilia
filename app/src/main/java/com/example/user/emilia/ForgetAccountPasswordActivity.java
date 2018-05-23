@@ -9,5 +9,6 @@ public class ForgetAccountPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forget_account_password);
+        setTitle("Forgot Password");
     }
 }

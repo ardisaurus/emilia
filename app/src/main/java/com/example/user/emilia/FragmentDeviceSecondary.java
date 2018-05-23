@@ -24,7 +24,7 @@ public class FragmentDeviceSecondary extends Fragment {
     private RecyclerView.Adapter mAdapter;
 
     private List<SecondaryDevice> mSecondaryDevice = new ArrayList<>();
-    SecondaryDevice device;
+    private SecondaryDevice device;
 
     @Nullable
     @Override
