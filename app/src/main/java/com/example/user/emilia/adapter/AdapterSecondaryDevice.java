@@ -1,7 +1,9 @@
 package com.example.user.emilia.adapter;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +47,22 @@ public class AdapterSecondaryDevice extends RecyclerView.Adapter<AdapterSecondar
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.ma);
+                builder.setMessage("Are you sure to delete this device?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //delete
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.create();
+                builder.show();
             }
         });
 

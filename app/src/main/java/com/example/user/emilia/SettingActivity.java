@@ -1,13 +1,16 @@
 package com.example.user.emilia;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class SettingActivity extends AppCompatActivity {
+    SessionManager session;
     private Button btnLogout, btnEmail, btnName, btnDob, btnPassword, btnDelete;
 
     @Override
@@ -15,6 +18,7 @@ public class SettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         setTitle("Account Settings");
+        session = new SessionManager(getApplicationContext());
 
         btnEmail = findViewById(R.id.btnEmail_setting);
         btnName = findViewById(R.id.btnName_setting);
@@ -66,8 +70,22 @@ public class SettingActivity extends AppCompatActivity {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(i);
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+                builder.setMessage("Are you sure to log out yor account?")
+                        .setPositiveButton("Log Out", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                session.logoutUser();
+                                MainActivity.ma.recreate();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.create();
+                builder.show();
             }
         });
     }

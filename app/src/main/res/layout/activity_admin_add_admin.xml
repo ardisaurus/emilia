@@ -129,23 +129,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtName_adminaddadmin" />
 
-    <EditText
-        android:id="@+id/txtDob_adminaddadmin"
+    <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
-        android:inputType="date"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblDob_adminaddadmin" />
+        app:layout_constraintTop_toBottomOf="@+id/lblDob_adminaddadmin">
+
+        <EditText
+            android:id="@+id/txtDob_adminaddadmin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:enabled="false"
+            android:inputType="date"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="374dp" />
+
+        <Button
+            android:id="@+id/btnPickdate_adminaddadmin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pick" />
+    </LinearLayout>
 
     <Button
-        android:id="@+id/btnRegister_adminaddadmin"
+        android:id="@+id/btnAdd_adminaddadmin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -153,9 +172,10 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Register"
+        android:text="Add"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtDob_adminaddadmin" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
 </android.support.constraint.ConstraintLayout>
