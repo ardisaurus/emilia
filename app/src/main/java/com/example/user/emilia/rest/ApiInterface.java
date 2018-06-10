@@ -14,9 +14,13 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("user")
     Call<PostUser> postUser(@Field("email") String email,
-                              @Field("name") String name,
-                              @Field("password") String password,
-                              @Field("dob") String dob,
-                              @Field("level") String level,
-                              @Field("action") String action);
+                            @Field("name") String name,
+                            @Field("password") String password,
+                            @Field("dob") String dob,
+                            @Field("level") String level,
+                            @Field("action") String action);
+    @FormUrlEncoded
+    @POST("reset")
+    Call<PostUser> postReset(@Field("email") String email,
+                            @Field("action") String action);
 }

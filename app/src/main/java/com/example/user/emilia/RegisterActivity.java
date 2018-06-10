@@ -124,7 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    public final static boolean isValidEmail(CharSequence target) {
+    private final static boolean isValidEmail(CharSequence target) {
         if (target == null) {
             return false;
         } else {
@@ -132,7 +132,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    public String md5(String s) {
+    private String md5(String s) {
         MessageDigest m = null;
 
         try {
