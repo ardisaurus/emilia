@@ -36,7 +36,7 @@ public class SettingDobActivity extends AppCompatActivity {
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        txtDob.setText(dayOfMonth + "-" + (month + 1) + "-" + year);
+                        txtDob.setText(year + "-" + (month + 1) + "-" + dayOfMonth);
                     }
                 }, mYear, mMonth, mDay);
                 datePickerDialog.show();

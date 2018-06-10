@@ -1,6 +1,9 @@
 package com.example.user.emilia.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class AdminDevice {
+    @SerializedName("dvc_id")
     private String dvc_id;
 
     public AdminDevice(String dvc_id) {

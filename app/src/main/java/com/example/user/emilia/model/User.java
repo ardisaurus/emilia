@@ -2,20 +2,28 @@ package com.example.user.emilia.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Admin {
+public class User {
     @SerializedName("email")
     private String email;
     @SerializedName("name")
     private String name;
+    @SerializedName("password")
+    private String password;
     @SerializedName("dob")
     private String dob;
+    @SerializedName("level")
+    private String level;
     @SerializedName("active")
-    private String active ;
+    private String active;
 
-    public Admin(String email, String name, String dob, String active) {
+    public  User(){}
+
+    public User(String email, String name, String password, String dob, String level, String active) {
         this.email = email;
         this.name = name;
+        this.password = password;
         this.dob = dob;
+        this.level = level;
         this.active = active;
     }
 
@@ -35,12 +43,28 @@ public class Admin {
         this.name = name;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getDob() {
         return dob;
     }
 
     public void setDob(String dob) {
         this.dob = dob;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 
     public String getActive() {

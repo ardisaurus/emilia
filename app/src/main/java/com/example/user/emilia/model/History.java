@@ -1,7 +1,14 @@
 package com.example.user.emilia.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class History {
-    String name, email, time;
+    @SerializedName("name")
+    String name;
+    @SerializedName("email")
+    String email;
+    @SerializedName("time")
+    String time;
 
     public History(String name, String email, String time) {
         this.name = name;

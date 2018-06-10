@@ -1,7 +1,14 @@
 package com.example.user.emilia.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class SecondaryDevice {
-    private String dvc_id, dvc_name, dvc_status;
+    @SerializedName("dvc_id")
+    private String dvc_id;
+    @SerializedName("dvc_name")
+    private String dvc_name;
+    @SerializedName("dvc_status")
+    private String dvc_status;
 
     public SecondaryDevice(String dvc_id, String dvc_name, String dvc_status) {
         this.dvc_id = dvc_id;
