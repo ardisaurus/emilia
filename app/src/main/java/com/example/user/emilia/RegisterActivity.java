@@ -132,17 +132,20 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private String md5(String s) {
-        MessageDigest m = null;
-
+    private static String md5(String pass) {
+        String password = null;
+        MessageDigest mdEnc;
         try {
-            m = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            mdEnc = MessageDigest.getInstance("MD5");
+            mdEnc.update(pass.getBytes(), 0, pass.length());
+            pass = new BigInteger(1, mdEnc.digest()).toString(16);
+            while (pass.length() < 32) {
+                pass = "0" + pass;
+            }
+            password = pass;
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
         }
-
-        m.update(s.getBytes(),0,s.length());
-        String hash = new BigInteger(1, m.digest()).toString(16);
-        return hash;
+        return password;
     }
 }

@@ -15,16 +15,19 @@ public class User {
     private String level;
     @SerializedName("active")
     private String active;
+    @SerializedName("status")
+    private String status;
 
     public  User(){}
 
-    public User(String email, String name, String password, String dob, String level, String active) {
+    public User(String email, String name, String password, String dob, String level, String active, String status) {
         this.email = email;
         this.name = name;
         this.password = password;
         this.dob = dob;
         this.level = level;
         this.active = active;
+        this.status = status;
     }
 
     public String getEmail() {
@@ -73,5 +76,13 @@ public class User {
 
     public void setActive(String active) {
         this.active = active;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

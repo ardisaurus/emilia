@@ -19,7 +19,7 @@ public class SessionManager {
 
     private static final String IS_LOGIN = "IsLoggedIn";
 
-    public static final String KEY_NAME = "name";
+    public static final String KEY_LEVEL = "level";
 
     public static final String KEY_EMAIL = "email";
 
@@ -29,16 +29,16 @@ public class SessionManager {
         editor = pref.edit();
     }
 
-    public void createLoginSession(String name, String email){
+    public void createLoginSession(String level, String email){
         editor.putBoolean(IS_LOGIN, true);
-        editor.putString(KEY_NAME, name);
+        editor.putString(KEY_LEVEL, level);
         editor.putString(KEY_EMAIL, email);
         editor.commit();
     }
 
     public HashMap<String, String> getUserDetails(){
         HashMap<String, String> user = new HashMap<String, String>();
-        user.put(KEY_NAME, pref.getString(KEY_NAME, null));
+        user.put(KEY_LEVEL, pref.getString(KEY_LEVEL, null));
         user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));
         return user;
     }

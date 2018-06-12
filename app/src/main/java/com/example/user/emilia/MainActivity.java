@@ -15,6 +15,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.emilia.adapter.SectionPageAdapter;
+import com.example.user.emilia.model.GetUser;
+import com.example.user.emilia.model.PostUser;
+import com.example.user.emilia.model.User;
+import com.example.user.emilia.rest.ApiClient;
+import com.example.user.emilia.rest.ApiInterface;
+
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     public static MainActivity ma;
@@ -26,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView lblForgotPassword_login, lblSignUp_login;
     private Button btnLogin;
     private Boolean adminLevel;
+    ApiInterface mApiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +51,15 @@ public class MainActivity extends AppCompatActivity {
         Boolean status = session.isLoggedIn();
         if(status==true){
             setContentView(R.layout.activity_main);
+            mApiInterface = ApiClient.getClient().create(ApiInterface.class);
 
-            adminLevel = false;
+            HashMap<String, String> user = session.getUserDetails();
+            String level = user.get(SessionManager.KEY_LEVEL);
+            if (level=="admin"){
+                adminLevel = true;
+            }else{
+                adminLevel = false;
+            }
 
             btnAdd = findViewById(R.id.btnAdd_main);
             btnRegistered = findViewById(R.id.btnRegistered_main);
@@ -119,25 +142,82 @@ public class MainActivity extends AppCompatActivity {
             });
         }else{
             setContentView(R.layout.activity_login);
+            mApiInterface = ApiClient.getClient().create(ApiInterface.class);
             txtEmail_login = (EditText) findViewById(R.id.txtEmail_login);
             txtPassword_login = (EditText) findViewById(R.id.txtPassword_login);
             btnLogin = (Button) findViewById(R.id.btnLogin_login);
             btnLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-                    String username = txtEmail_login.getText().toString();
-                    String password = txtPassword_login.getText().toString();
-                    if(username.trim().length() > 0 && password.trim().length() > 0){
-                        if(username.equals("test") && password.equals("test")){
-                            session.createLoginSession("Android Hive", "anroidhive@gmail.com");
-                            recreate();
-                        }else{
-                            Toast.makeText(getApplicationContext(), "Login fail", Toast.LENGTH_LONG).show();
-                        }
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Insert username and password", Toast.LENGTH_LONG).show();
-                    }
+                    if (txtEmail_login.getText().toString().isEmpty()==true || txtPassword_login.getText().toString().isEmpty()==true){
+                        Toast.makeText(MainActivity.this, "Make sure to fill every form", Toast.LENGTH_SHORT).show();
+                    }else {
+                        final String email = txtEmail_login.getText().toString();
+                        final String password = txtPassword_login.getText().toString();
+                        if (isValidEmail(email)==true){
+                            if (password.length()>=8 && password.length()<=12) {
+                                Call<GetUser> userCall = mApiInterface.getUser(email);
+                                userCall.enqueue(new Callback<GetUser>() {
+                                    @Override
+                                    public void onResponse(Call<GetUser> call, Response<GetUser> response) {
+                                        List<User> UserList = response.body().getListDataUser();
+                                        if(UserList.size()>0){
+                                            Call<PostUser> postLoginCall = mApiInterface.postLogin(email, md5(password), "auth");
+                                            postLoginCall.enqueue(new Callback<PostUser>() {
+                                                @Override
+                                                public void onResponse(Call<PostUser> call, Response<PostUser> response) {
+                                                    if (response.body().getmUser().getStatus().equals("success")){
+                                                        Call<GetUser> userCall = mApiInterface.getUser(email);
+                                                        userCall.enqueue(new Callback<GetUser>() {
+                                                            @Override
+                                                            public void onResponse(Call<GetUser> call, Response<GetUser> response) {
+                                                                List<User> listUser = response.body().getListDataUser();
+                                                                if (listUser.get(0).getActive().equals("1")){
+                                                                    String uLevel;
+                                                                    if (listUser.get(0).getLevel().equals("1")){
+                                                                        uLevel="admin";
+                                                                    }else{
+                                                                        uLevel="member";
+                                                                    }
+                                                                    session.createLoginSession(uLevel, email);
+                                                                    recreate();
+                                                                }else{
+                                                                    Toast.makeText(MainActivity.this, "User suspended",Toast.LENGTH_LONG).show();
+                                                                }
+                                                            }
 
+                                                            @Override
+                                                            public void onFailure(Call<GetUser> call, Throwable t) {
+                                                                Toast.makeText(MainActivity.this, "Connection fail",Toast.LENGTH_LONG).show();
+                                                            }
+                                                        });
+                                                    }else{
+                                                        Toast.makeText(MainActivity.this, "Email And Password don't match ", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<PostUser> call, Throwable t) {
+                                                    Toast.makeText(MainActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }else{
+                                            Toast.makeText(MainActivity.this, "Email address not registered", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<GetUser> call, Throwable t) {
+                                        Toast.makeText(MainActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }else {
+                                Toast.makeText(MainActivity.this, "Password need to be between 8 to 12 character", Toast.LENGTH_SHORT).show();
+                            }
+                        }else{
+                            Toast.makeText(MainActivity.this, "Insert valid email", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
             });
             lblSignUp_login = findViewById(R.id.lblSignup_login);
@@ -195,5 +275,30 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    private final static boolean isValidEmail(CharSequence target) {
+        if (target == null) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
+    }
+
+    private static String md5(String pass) {
+        String password = null;
+        MessageDigest mdEnc;
+        try {
+            mdEnc = MessageDigest.getInstance("MD5");
+            mdEnc.update(pass.getBytes(), 0, pass.length());
+            pass = new BigInteger(1, mdEnc.digest()).toString(16);
+            while (pass.length() < 32) {
+                pass = "0" + pass;
+            }
+            password = pass;
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        }
+        return password;
     }
 }

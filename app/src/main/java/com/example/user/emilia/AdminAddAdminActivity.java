@@ -3,24 +3,45 @@ package com.example.user.emilia;
 import android.app.DatePickerDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.example.user.emilia.model.GetUser;
+import com.example.user.emilia.model.PostUser;
+import com.example.user.emilia.model.User;
+import com.example.user.emilia.rest.ApiClient;
+import com.example.user.emilia.rest.ApiInterface;
+
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AdminAddAdminActivity extends AppCompatActivity {
-    Button btnPick;
-    EditText txtDob;
+    Button btnPick, btnAdd;
+    EditText txtEmail, txtDob, txtName, txtPassword1, txtPassword2;
     private int mYear, mMonth, mDay;
+    ApiInterface mApiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_add_admin);
         setTitle("Add Admin");
-
+        mApiInterface = ApiClient.getClient().create(ApiInterface.class);
+        txtEmail = findViewById(R.id.txtEmail_adminaddadmin);
+        txtName = findViewById(R.id.txtName_adminaddadmin);
+        txtPassword1 = findViewById(R.id.txtPassword1_adminaddadmin);
+        txtPassword2 = findViewById(R.id.txtPassword2_adminaddadmin);
         txtDob = findViewById(R.id.txtDob_adminaddadmin);
         btnPick = findViewById(R.id.btnPickdate_adminaddadmin);
         btnPick.setOnClickListener(new View.OnClickListener() {
@@ -41,5 +62,89 @@ public class AdminAddAdminActivity extends AppCompatActivity {
                 datePickerDialog.show();
             }
         });
+        btnAdd = findViewById(R.id.btnAdd_adminaddadmin);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (txtName.getText().toString().isEmpty()==true || txtEmail.getText().toString().isEmpty()==true || txtPassword1.getText().toString().isEmpty()==true || txtPassword2.getText().toString().isEmpty()==true || txtDob.getText().toString().isEmpty()==true){
+                    Toast.makeText(AdminAddAdminActivity.this, "Make sure to fill every form", Toast.LENGTH_SHORT).show();
+                }else{
+                    final String name = txtName.getText().toString();
+                    final String email = txtEmail.getText().toString();
+                    final String password1 = txtPassword1.getText().toString();
+                    final String password2 = txtPassword2.getText().toString();
+                    final String dob = txtDob.getText().toString();
+                    if (isValidEmail(email)==true){
+                        Call<GetUser> userCall = mApiInterface.getUser(email);
+                        userCall.enqueue(new Callback<GetUser>() {
+                            @Override
+                            public void onResponse(Call<GetUser> call, Response<GetUser> response) {
+                                List<User> UserList = response.body().getListDataUser();
+                                if(UserList.size()>0){
+                                    Toast.makeText(AdminAddAdminActivity.this, "Email address has been used", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    if (password1.length()>=8 && password1.length()<=12) {
+                                        if (password1.equals(password2) == true) {
+                                            if (name.length() <= 4) {
+                                                Toast.makeText(AdminAddAdminActivity.this, "Name need to be 5 or more character", Toast.LENGTH_SHORT).show();
+                                            }else{
+                                                Call<PostUser> postUserCall = mApiInterface.postUser(email, name, md5(password1), dob, "1", "insert");
+                                                postUserCall.enqueue(new Callback<PostUser>() {
+                                                    @Override
+                                                    public void onResponse(Call<PostUser> call, Response<PostUser> response) {
+                                                        finish();
+                                                        Toast.makeText(MainActivity.ma, "Check your email to confirm registration", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    @Override
+                                                    public void onFailure(Call<PostUser> call, Throwable t) {
+                                                        Toast.makeText(AdminAddAdminActivity.this, "Internet connection fail", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+                                        }else{
+                                            Toast.makeText(AdminAddAdminActivity.this, "Passwords don't match", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }else{
+                                        Toast.makeText(AdminAddAdminActivity.this, "Password need to be between 8 to 12 character", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<GetUser> call, Throwable t) {
+                                Log.e("Retrofit Get", t.toString());
+                            }
+                        });
+                    }else{
+                        Toast.makeText(AdminAddAdminActivity.this, "Insert valid email address", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+    }
+
+    private final static boolean isValidEmail(CharSequence target) {
+        if (target == null) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
+    }
+
+    private static String md5(String pass) {
+        String password = null;
+        MessageDigest mdEnc;
+        try {
+            mdEnc = MessageDigest.getInstance("MD5");
+            mdEnc.update(pass.getBytes(), 0, pass.length());
+            pass = new BigInteger(1, mdEnc.digest()).toString(16);
+            while (pass.length() < 32) {
+                pass = "0" + pass;
+            }
+            password = pass;
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        }
+        return password;
     }
 }
