@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.design.widget.TabLayout
-            android:id="@+id/tabs"
+            android:id="@+id/tabsadmin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </android.support.design.widget.TabLayout>
@@ -22,16 +22,24 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/container1"
+        android:id="@+id/container2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btnAdd_main"
+        android:id="@+id/btnAdd_mainadmin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/add" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btnRegistered_mainadmin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/reg" />
 
 </android.support.design.widget.CoordinatorLayout>

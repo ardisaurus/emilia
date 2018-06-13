@@ -8,9 +8,14 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
+import com.example.user.emilia.rest.ApiClient;
+import com.example.user.emilia.rest.ApiInterface;
+
 import java.util.Calendar;
 
 public class SettingDobActivity extends AppCompatActivity {
+    ApiInterface mApiInterface;
+    SessionManager session;
     Button btnSubmit, btnPick;
     TextView txtDob;
     private int mYear, mMonth, mDay;
@@ -20,6 +25,8 @@ public class SettingDobActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_dob);
         setTitle("Setting : Dob");
+        session = new SessionManager(getApplicationContext());
+        mApiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         btnSubmit = findViewById(R.id.btnSubmit_settingdob);
         txtDob = findViewById(R.id.txtDob_settingdob);
@@ -40,6 +47,12 @@ public class SettingDobActivity extends AppCompatActivity {
                     }
                 }, mYear, mMonth, mDay);
                 datePickerDialog.show();
+            }
+        });
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }

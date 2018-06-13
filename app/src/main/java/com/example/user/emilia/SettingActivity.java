@@ -7,10 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
+
 public class SettingActivity extends AppCompatActivity {
+    public static SettingActivity sa;
     SessionManager session;
+    private TextView lblEmail, lblName, lblDob;
     private Button btnLogout, btnEmail, btnName, btnDob, btnPassword, btnDelete;
 
     @Override
@@ -18,7 +23,15 @@ public class SettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         setTitle("Account Settings");
+        sa=this;
         session = new SessionManager(getApplicationContext());
+
+        HashMap<String, String> user = session.getUserDetails();
+        String email = user.get(SessionManager.KEY_EMAIL);
+        lblEmail = findViewById(R.id.lblEmail_setting);
+        lblEmail.setText("Email : "+email);
+        lblName  = findViewById(R.id.lblName_setting);
+        lblDob = findViewById(R.id.lblDob_setting);
 
         btnEmail = findViewById(R.id.btnEmail_setting);
         btnName = findViewById(R.id.btnName_setting);

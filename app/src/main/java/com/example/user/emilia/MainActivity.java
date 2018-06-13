@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText txtEmail_login, txtPassword_login;
     private TextView lblForgotPassword_login, lblSignUp_login;
     private Button btnLogin;
-    private Boolean adminLevel;
+    private TabLayout tabLayout;
     ApiInterface mApiInterface;
 
     @Override
@@ -50,35 +50,25 @@ public class MainActivity extends AppCompatActivity {
         ma=this;
         Boolean status = session.isLoggedIn();
         if(status==true){
-            setContentView(R.layout.activity_main);
             mApiInterface = ApiClient.getClient().create(ApiInterface.class);
-
             HashMap<String, String> user = session.getUserDetails();
             String level = user.get(SessionManager.KEY_LEVEL);
-            if (level=="admin"){
-                adminLevel = true;
-            }else{
-                adminLevel = false;
-            }
+            if (level.equals("admin")){
+                setContentView(R.layout.activity_main_admin);
+                btnAdd = findViewById(R.id.btnAdd_mainadmin);
+                btnRegistered = findViewById(R.id.btnRegistered_mainadmin);
 
-            btnAdd = findViewById(R.id.btnAdd_main);
-            btnRegistered = findViewById(R.id.btnRegistered_main);
-            if(adminLevel==false){
-                btnRegistered.setVisibility(View.GONE);
-            }
+                mSectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
 
-            mSectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
+                mViewPager = findViewById(R.id.container2);
+                setupViewPager(mViewPager, true);
 
-            mViewPager = (ViewPager) findViewById(R.id.container1);
-            setupViewPager(mViewPager, adminLevel);
-
-            final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-            tabLayout.setupWithViewPager(mViewPager, adminLevel);
-            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                @Override
-                public void onTabSelected(TabLayout.Tab tab) {
-                    int tabPosition = tabLayout.getSelectedTabPosition();
-                    if (adminLevel==true){
+                tabLayout = findViewById(R.id.tabsadmin);
+                tabLayout.setupWithViewPager(mViewPager, true);
+                tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        int tabPosition = tabLayout.getSelectedTabPosition();
                         if (tabPosition==0){
                             btnAdd.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -90,56 +80,81 @@ public class MainActivity extends AppCompatActivity {
                             btnRegistered.setVisibility(View.VISIBLE);
                             btnRegistered.setOnClickListener(new View.OnClickListener() {
                                 @Override
-                                public void onClick(View v) {
-                                    Intent i = new Intent(getApplicationContext(), AdminDeviceRegisteredActivity.class);
-                                    startActivity(i);
-                                }
+                                 public void onClick(View v) {
+                                     Intent i = new Intent(getApplicationContext(), AdminDeviceRegisteredActivity.class);
+                                     startActivity(i);
+                                 }
                             });
                         }
                         if (tabPosition==1){
                             btnAdd.setOnClickListener(new View.OnClickListener() {
-                                @Override
+                            @Override
                                 public void onClick(View v) {
                                     Intent i = new Intent(getApplicationContext(), AdminAddAdminActivity.class);
                                     startActivity(i);
                                 }
                             });
                         }
-                    }else{
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+                        int tabPosition = tabLayout.getSelectedTabPosition();
                         if (tabPosition==0){
-                            btnAdd.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent i = new Intent(getApplicationContext(), DeviceAddActivity.class);
-                                    startActivity(i);
-                                }
-                            });
-                        }
-                        if (tabPosition==1){
-                            btnAdd.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent i = new Intent(getApplicationContext(), DeviceAddSecondaryActivity.class);
-                                    startActivity(i);
-                                }
-                            });
+                            btnRegistered.setVisibility(View.GONE);
                         }
                     }
-                }
 
-                @Override
-                public void onTabUnselected(TabLayout.Tab tab) {
-                    int tabPosition = tabLayout.getSelectedTabPosition();
-                    if (adminLevel==true && tabPosition==0){
-                        btnRegistered.setVisibility(View.GONE);
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+
                     }
-                }
+                });
+            }else{
+                setContentView(R.layout.activity_main);
+                btnAdd = findViewById(R.id.btnAdd_main);
+                mSectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
 
-                @Override
-                public void onTabReselected(TabLayout.Tab tab) {
+                mViewPager = findViewById(R.id.container1);
+                setupViewPager(mViewPager, false);
 
-                }
-            });
+                tabLayout = findViewById(R.id.tabs);
+                tabLayout.setupWithViewPager(mViewPager, false);
+                tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        int tabPosition = tabLayout.getSelectedTabPosition();
+                            if (tabPosition==0){
+                                btnAdd.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent i = new Intent(getApplicationContext(), DeviceAddActivity.class);
+                                        startActivity(i);
+                                    }
+                                });
+                            }
+                            if (tabPosition==1){
+                                btnAdd.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent i = new Intent(getApplicationContext(), DeviceAddSecondaryActivity.class);
+                                        startActivity(i);
+                                    }
+                                });
+                            }
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+
+                    }
+                });
+            }
         }else{
             setContentView(R.layout.activity_login);
             mApiInterface = ApiClient.getClient().create(ApiInterface.class);
@@ -149,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
             btnLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-                    if (txtEmail_login.getText().toString().isEmpty()==true || txtPassword_login.getText().toString().isEmpty()==true){
+                    if (txtEmail_login.getText().toString().isEmpty() || txtPassword_login.getText().toString().isEmpty()){
                         Toast.makeText(MainActivity.this, "Make sure to fill every form", Toast.LENGTH_SHORT).show();
                     }else {
                         final String email = txtEmail_login.getText().toString();
@@ -180,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                                                                         uLevel="member";
                                                                     }
                                                                     session.createLoginSession(uLevel, email);
-                                                                    recreate();
+                                                                    ma.recreate();
                                                                 }else{
                                                                     Toast.makeText(MainActivity.this, "User suspended",Toast.LENGTH_LONG).show();
                                                                 }

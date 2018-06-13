@@ -66,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (txtName.getText().toString().isEmpty()==true || txtEmail.getText().toString().isEmpty()==true || txtPassword1.getText().toString().isEmpty()==true || txtPassword2.getText().toString().isEmpty()==true || txtDob.getText().toString().isEmpty()==true){
+                if (txtName.getText().toString().isEmpty() || txtEmail.getText().toString().isEmpty() || txtPassword1.getText().toString().isEmpty() || txtPassword2.getText().toString().isEmpty() || txtDob.getText().toString().isEmpty()){
                     Toast.makeText(RegisterActivity.this, "Make sure to fill every form", Toast.LENGTH_SHORT).show();
                 }else{
                     final String name = txtName.getText().toString();

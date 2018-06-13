@@ -28,4 +28,10 @@ public interface ApiInterface {
     Call<PostUser> postLogin(@Field("email") String email,
                              @Field("password") String password,
                              @Field("action") String action);
+    @FormUrlEncoded
+    @POST("user")
+    Call<PostUser> postSettingEmail(@Field("email") String email,
+                                    @Field("new_email") String new_email,
+                                    @Field("action") String action,
+                                    @Field("part") String part);
 }

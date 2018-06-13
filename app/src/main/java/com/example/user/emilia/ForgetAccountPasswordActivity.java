@@ -37,12 +37,11 @@ public class ForgetAccountPasswordActivity extends AppCompatActivity {
         btnSubit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (txtEmail.getText().toString().isEmpty()==true){
+                if (txtEmail.getText().toString().isEmpty()){
                     Toast.makeText(ForgetAccountPasswordActivity.this, "Fill email address", Toast.LENGTH_SHORT).show();
                 }else{
                     final String email = txtEmail.getText().toString();
                     if (isValidEmail(email)==true){
-
                         Call<GetUser> userCall = mApiInterface.getUser(email);
                         userCall.enqueue(new Callback<GetUser>() {
                             @Override
