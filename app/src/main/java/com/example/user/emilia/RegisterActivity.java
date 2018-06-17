@@ -97,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                     }
                                                     @Override
                                                     public void onFailure(Call<PostUser> call, Throwable t) {
-                                                        Toast.makeText(RegisterActivity.this, "Internet connection fail", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(RegisterActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
                                             }

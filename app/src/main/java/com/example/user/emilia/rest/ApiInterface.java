@@ -1,4 +1,5 @@
 package com.example.user.emilia.rest;
+import com.example.user.emilia.model.GetAdmin;
 import com.example.user.emilia.model.GetUser;
 import com.example.user.emilia.model.PostUser;
 
@@ -34,4 +35,28 @@ public interface ApiInterface {
                                     @Field("new_email") String new_email,
                                     @Field("action") String action,
                                     @Field("part") String part);
+    @FormUrlEncoded
+    @POST("user")
+    Call<PostUser> postSettingDob(@Field("email") String email,
+                                  @Field("dob") String dob,
+                                  @Field("action") String action,
+                                  @Field("part") String part);
+    @FormUrlEncoded
+    @POST("user")
+    Call<PostUser> postSettingName(@Field("email") String email,
+                                   @Field("name") String dob,
+                                   @Field("action") String action,
+                                   @Field("part") String part);
+    @FormUrlEncoded
+    @POST("user")
+    Call<PostUser> postSettingDelete(@Field("email") String email,
+                                     @Field("action") String action);
+    @FormUrlEncoded
+    @POST("user")
+    Call<PostUser> postSettingPassword( @Field("email") String email,
+                                        @Field("password") String password,
+                                        @Field("action") String action,
+                                        @Field("part") String part);
+    @GET("user")
+    Call<GetAdmin> getAdmin(@retrofit2.http.Query("email") String email);
 }

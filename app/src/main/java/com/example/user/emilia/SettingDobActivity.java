@@ -7,11 +7,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.user.emilia.model.PostUser;
 import com.example.user.emilia.rest.ApiClient;
 import com.example.user.emilia.rest.ApiInterface;
 
 import java.util.Calendar;
+import java.util.HashMap;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SettingDobActivity extends AppCompatActivity {
     ApiInterface mApiInterface;
@@ -52,7 +59,27 @@ public class SettingDobActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(txtDob.getText().toString().isEmpty()){
+                    Toast.makeText(SettingDobActivity.this, "Fill date of birth", Toast.LENGTH_SHORT).show();
+                }else{
+                    HashMap<String, String> user = session.getUserDetails();
+                    final String email = user.get(SessionManager.KEY_EMAIL);
+                    final String dob = txtDob.getText().toString();
+                    Call<PostUser> postSettingDobCall = mApiInterface.postSettingDob(email, dob, "update", "dob");
+                    postSettingDobCall.enqueue(new Callback<PostUser>() {
+                        @Override
+                        public void onResponse(Call<PostUser> call, Response<PostUser> response) {
+                            finish();
+                            SettingActivity.sa.recreate();
+                            Toast.makeText(SettingActivity.sa, "Date of birth has been changed", Toast.LENGTH_SHORT).show();
+                        }
 
+                        @Override
+                        public void onFailure(Call<PostUser> call, Throwable t) {
+                            Toast.makeText(SettingDobActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
     }

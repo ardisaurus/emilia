@@ -10,11 +10,22 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.emilia.model.GetUser;
+import com.example.user.emilia.model.User;
+import com.example.user.emilia.rest.ApiClient;
+import com.example.user.emilia.rest.ApiInterface;
+
 import java.util.HashMap;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SettingActivity extends AppCompatActivity {
     public static SettingActivity sa;
     SessionManager session;
+    ApiInterface mApiInterface;
     private TextView lblEmail, lblName, lblDob;
     private Button btnLogout, btnEmail, btnName, btnDob, btnPassword, btnDelete;
 
@@ -25,6 +36,7 @@ public class SettingActivity extends AppCompatActivity {
         setTitle("Account Settings");
         sa=this;
         session = new SessionManager(getApplicationContext());
+        mApiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         HashMap<String, String> user = session.getUserDetails();
         String email = user.get(SessionManager.KEY_EMAIL);
@@ -32,6 +44,21 @@ public class SettingActivity extends AppCompatActivity {
         lblEmail.setText("Email : "+email);
         lblName  = findViewById(R.id.lblName_setting);
         lblDob = findViewById(R.id.lblDob_setting);
+
+        Call<GetUser> userCall = mApiInterface.getUser(email);
+        userCall.enqueue(new Callback<GetUser>() {
+            @Override
+            public void onResponse(Call<GetUser> call, Response<GetUser> response) {
+                List<User> UserList = response.body().getListDataUser();
+                lblName.setText("Name : "+UserList.get(0).getName());
+                lblDob.setText("Date of birth : "+UserList.get(0).getDob());
+            }
+
+            @Override
+            public void onFailure(Call<GetUser> call, Throwable t) {
+                Toast.makeText(SettingActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         btnEmail = findViewById(R.id.btnEmail_setting);
         btnName = findViewById(R.id.btnName_setting);

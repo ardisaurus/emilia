@@ -92,8 +92,9 @@ public class AdminAddAdminActivity extends AppCompatActivity {
                                                 postUserCall.enqueue(new Callback<PostUser>() {
                                                     @Override
                                                     public void onResponse(Call<PostUser> call, Response<PostUser> response) {
+                                                        FragmentAdminAdminList.faal.refresh();
                                                         finish();
-                                                        Toast.makeText(MainActivity.ma, "Check your email to confirm registration", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(MainActivity.ma, "Admin has been added", Toast.LENGTH_SHORT).show();
                                                     }
                                                     @Override
                                                     public void onFailure(Call<PostUser> call, Throwable t) {

@@ -9,13 +9,18 @@ public class Admin {
     private String name;
     @SerializedName("dob")
     private String dob;
+    @SerializedName("level")
+    private String Level ;
     @SerializedName("active")
     private String active ;
 
-    public Admin(String email, String name, String dob, String active) {
+    public Admin(){}
+
+    public Admin(String email, String name, String dob, String level, String active) {
         this.email = email;
         this.name = name;
         this.dob = dob;
+        Level = level;
         this.active = active;
     }
 
@@ -41,6 +46,14 @@ public class Admin {
 
     public void setDob(String dob) {
         this.dob = dob;
+    }
+
+    public String getLevel() {
+        return Level;
+    }
+
+    public void setLevel(String level) {
+        Level = level;
     }
 
     public String getActive() {

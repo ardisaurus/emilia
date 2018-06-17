@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         session = new SessionManager(getApplicationContext());
         ma=this;
         Boolean status = session.isLoggedIn();
-        if(status==true){
+        if(status){
             mApiInterface = ApiClient.getClient().create(ApiInterface.class);
             HashMap<String, String> user = session.getUserDetails();
             String level = user.get(SessionManager.KEY_LEVEL);
@@ -158,9 +158,9 @@ public class MainActivity extends AppCompatActivity {
         }else{
             setContentView(R.layout.activity_login);
             mApiInterface = ApiClient.getClient().create(ApiInterface.class);
-            txtEmail_login = (EditText) findViewById(R.id.txtEmail_login);
-            txtPassword_login = (EditText) findViewById(R.id.txtPassword_login);
-            btnLogin = (Button) findViewById(R.id.btnLogin_login);
+            txtEmail_login = findViewById(R.id.txtEmail_login);
+            txtPassword_login = findViewById(R.id.txtPassword_login);
+            btnLogin = findViewById(R.id.btnLogin_login);
             btnLogin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                     }else {
                         final String email = txtEmail_login.getText().toString();
                         final String password = txtPassword_login.getText().toString();
-                        if (isValidEmail(email)==true){
+                        if (isValidEmail(email)){
                             if (password.length()>=8 && password.length()<=12) {
                                 Call<GetUser> userCall = mApiInterface.getUser(email);
                                 userCall.enqueue(new Callback<GetUser>() {
@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager, Boolean adminLevel){
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
-        if (adminLevel==true){
+        if (adminLevel){
             adapter.addFragment(new FragmentAdminDevice(), "Device");
             adapter.addFragment(new FragmentAdminAdminList(), "Admins");
         }else{
@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_tab, menu);
         MenuItem item = menu.findItem(R.id.action_settings);
         Boolean status = session.isLoggedIn();
-        if(status==true) {
+        if(status) {
             item.setVisible(true);
         }else{
             item.setVisible(false);
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private final static boolean isValidEmail(CharSequence target) {
+    private static boolean isValidEmail(CharSequence target) {
         if (target == null) {
             return false;
         } else {

@@ -69,6 +69,7 @@ public class SettingEmailActivity extends AppCompatActivity {
                                                             session.logoutUser();
                                                             session.createLoginSession(uLevel, new_email);
                                                             finish();
+                                                            SettingActivity.sa.recreate();
                                                             Toast.makeText(SettingActivity.sa, "Email has been changed", Toast.LENGTH_SHORT).show();
                                                         }
 
