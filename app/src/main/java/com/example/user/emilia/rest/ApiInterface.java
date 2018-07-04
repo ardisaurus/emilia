@@ -1,6 +1,11 @@
 package com.example.user.emilia.rest;
 import com.example.user.emilia.model.GetAdmin;
+import com.example.user.emilia.model.GetAdminDevice;
+import com.example.user.emilia.model.GetNugen;
+import com.example.user.emilia.model.GetRegisteredDevice;
 import com.example.user.emilia.model.GetUser;
+import com.example.user.emilia.model.Nugen;
+import com.example.user.emilia.model.PostAdminDevice;
 import com.example.user.emilia.model.PostUser;
 
 import retrofit2.Call;
@@ -10,6 +15,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 public interface ApiInterface {
+//    User management
     @GET("user")
     Call<GetUser> getUser(@retrofit2.http.Query("email") String email);
     @FormUrlEncoded
@@ -59,4 +65,17 @@ public interface ApiInterface {
                                         @Field("part") String part);
     @GET("user")
     Call<GetAdmin> getAdmin(@retrofit2.http.Query("email") String email);
+//    ===========
+
+    @GET("admindeviceman")
+    Call<GetRegisteredDevice> getRegisteredDevice(@retrofit2.http.Query("ownership") Integer ownership);
+    @GET("admindeviceman")
+    Call<GetAdminDevice> getAdminDevice();
+    @GET("nugen")
+    Call<GetNugen> getNugenId();
+    @FormUrlEncoded
+    @POST("admindeviceman")
+    Call<PostAdminDevice> postAddAdminDevice(@Field("dvc_id") String dvc_id,
+                                             @Field("dvc_password") String password,
+                                             @Field("action") String action);
 }
