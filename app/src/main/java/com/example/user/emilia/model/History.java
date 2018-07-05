@@ -3,17 +3,20 @@ package com.example.user.emilia.model;
 import com.google.gson.annotations.SerializedName;
 
 public class History {
-    @SerializedName("name")
+    @SerializedName("hst_user_name")
     String name;
-    @SerializedName("email")
+    @SerializedName("hst_email")
     String email;
-    @SerializedName("time")
+    @SerializedName("hst_time")
     String time;
+    @SerializedName("hst_date")
+    String date;
 
-    public History(String name, String email, String time) {
+    public History(String name, String email, String time, String date) {
         this.name = name;
         this.email = email;
         this.time = time;
+        this.date = date;
     }
 
     public String getName() {
@@ -38,5 +41,13 @@ public class History {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

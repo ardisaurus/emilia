@@ -57,6 +57,21 @@ public class MainActivity extends AppCompatActivity {
                 setContentView(R.layout.activity_main_admin);
                 btnAdd = findViewById(R.id.btnAdd_mainadmin);
                 btnRegistered = findViewById(R.id.btnRegistered_mainadmin);
+                btnAdd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getApplicationContext(), AdminAddDeviceActivity.class);
+                        startActivity(i);
+                    }
+                });
+                btnRegistered.setVisibility(View.VISIBLE);
+                btnRegistered.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getApplicationContext(), AdminDeviceRegisteredActivity.class);
+                        startActivity(i);
+                    }
+                });
 
                 mSectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
 
@@ -113,6 +128,13 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 setContentView(R.layout.activity_main);
                 btnAdd = findViewById(R.id.btnAdd_main);
+                btnAdd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getApplicationContext(), DeviceAddActivity.class);
+                        startActivity(i);
+                    }
+                });
                 mSectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
 
                 mViewPager = findViewById(R.id.container1);

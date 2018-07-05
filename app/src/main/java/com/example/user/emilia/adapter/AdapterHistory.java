@@ -29,7 +29,7 @@ public class AdapterHistory extends RecyclerView.Adapter<AdapterHistory.ViewHold
         History history = mHistory.get(position);
         holder.lblEmail.setText(history.getEmail());
         holder.lblName.setText(history.getName());
-        holder.lblTime.setText(history.getTime());
+        holder.lblTime.setText(history.getDate()+" / "+history.getTime());
     }
 
     @Override

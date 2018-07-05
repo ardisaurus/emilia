@@ -33,14 +33,21 @@ public class AdapterSecondaryDevice extends RecyclerView.Adapter<AdapterSecondar
 
     @Override
     public void onBindViewHolder(@NonNull AdapterSecondaryDevice.ViewHolder holder, int position) {
-        SecondaryDevice secondarydevice = mSecondaryDevice.get(position);
+        final SecondaryDevice secondarydevice = mSecondaryDevice.get(position);
+        String lockStatus;
         holder.dvc_id.setText(secondarydevice.getDvc_id());
         holder.dvc_name.setText(secondarydevice.getDvc_name());
-        holder.dvc_status.setText(secondarydevice.getDvc_status());
+        if (secondarydevice.getDvc_status().equals("1")){
+            lockStatus = "Open";
+        }else{
+            lockStatus = "Close";
+        }
+        holder.dvc_status.setText(lockStatus);
         holder.btnLock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.ma, DeviceUnlockSecondaryActivity.class);
+                i.putExtra("dvc_id",secondarydevice.getDvc_id());
                 MainActivity.ma.startActivity(i);
             }
         });

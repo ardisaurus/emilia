@@ -1,12 +1,19 @@
 package com.example.user.emilia.rest;
 import com.example.user.emilia.model.GetAdmin;
 import com.example.user.emilia.model.GetAdminDevice;
+import com.example.user.emilia.model.GetHistory;
 import com.example.user.emilia.model.GetNugen;
+import com.example.user.emilia.model.GetPrimaryDevice;
 import com.example.user.emilia.model.GetRegisteredDevice;
+import com.example.user.emilia.model.GetSecondaryDevice;
 import com.example.user.emilia.model.GetUser;
+import com.example.user.emilia.model.History;
 import com.example.user.emilia.model.Nugen;
 import com.example.user.emilia.model.PostAdminDevice;
+import com.example.user.emilia.model.PostPrimaryDevice;
 import com.example.user.emilia.model.PostUser;
+import com.example.user.emilia.model.PrimaryDevice;
+import com.example.user.emilia.model.SecondaryDevice;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -15,7 +22,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 public interface ApiInterface {
-//    User management
+//  ======= User management =======
     @GET("user")
     Call<GetUser> getUser(@retrofit2.http.Query("email") String email);
     @FormUrlEncoded
@@ -65,8 +72,8 @@ public interface ApiInterface {
                                         @Field("part") String part);
     @GET("user")
     Call<GetAdmin> getAdmin(@retrofit2.http.Query("email") String email);
-//    ===========
-
+//  ===========================
+//  ======= Admin device ======
     @GET("admindeviceman")
     Call<GetRegisteredDevice> getRegisteredDevice(@retrofit2.http.Query("ownership") Integer ownership);
     @GET("admindeviceman")
@@ -78,4 +85,28 @@ public interface ApiInterface {
     Call<PostAdminDevice> postAddAdminDevice(@Field("dvc_id") String dvc_id,
                                              @Field("dvc_password") String password,
                                              @Field("action") String action);
+//    ===========================
+//    ====== Member Device ======
+    @GET("memberdeviceman")
+    Call<GetPrimaryDevice> getPrimaryDevice(@retrofit2.http.Query("email") String email);
+    @GET("memberdeviceman")
+    Call<GetSecondaryDevice> getSecondaryDevice(@retrofit2.http.Query("email") String email,
+                                                @retrofit2.http.Query("level") Integer level);
+    @GET("accesshistory")
+    Call<GetHistory> getHistory(@retrofit2.http.Query("dvc_id") String dvc_id);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postAddPrimaryDevice( @Field("own_dvc_id") String dvc_id,
+                                                  @Field("own_email") String password,
+                                                  @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postAuthPrimaryDevice( @Field("dvc_id") String dvc_id,
+                                                   @Field("dvc_password") String password,
+                                                   @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postIdcheckPrimaryDevice( @Field("dvc_id") String dvc_id,
+                                                      @Field("action") String action);
+//    ===========================
 }

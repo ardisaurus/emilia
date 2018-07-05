@@ -33,14 +33,21 @@ public class AdapterPrimaryDevice extends android.support.v7.widget.RecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull AdapterPrimaryDevice.ViewHolder holder, int position) {
-        PrimaryDevice primarydevice = mPrimaryDevice.get(position);
+        final PrimaryDevice primarydevice = mPrimaryDevice.get(position);
+        String lockStatus;
         holder.dvc_id.setText(primarydevice.getDvc_id());
         holder.dvc_name.setText(primarydevice.getDvc_name());
-        holder.dvc_status.setText(primarydevice.getDvc_status());
+        if (primarydevice.getDvc_status().equals("1")){
+            lockStatus = "Open";
+        }else{
+            lockStatus = "Close";
+        }
+        holder.dvc_status.setText(lockStatus);
         holder.btnUnlock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.ma, DeviceUnlockActivity.class);
+                i.putExtra("dvc_id",primarydevice.getDvc_id());
                 MainActivity.ma.startActivity(i);
             }
         });
@@ -48,6 +55,7 @@ public class AdapterPrimaryDevice extends android.support.v7.widget.RecyclerView
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.ma, DeviceHistoryActivity.class);
+                i.putExtra("dvc_id",primarydevice.getDvc_id());
                 MainActivity.ma.startActivity(i);
             }
         });
@@ -55,6 +63,7 @@ public class AdapterPrimaryDevice extends android.support.v7.widget.RecyclerView
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.ma, DeviceEditActivity.class);
+                i.putExtra("dvc_id",primarydevice.getDvc_id());
                 MainActivity.ma.startActivity(i);
             }
         });
