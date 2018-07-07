@@ -7,13 +7,10 @@ import com.example.user.emilia.model.GetPrimaryDevice;
 import com.example.user.emilia.model.GetRegisteredDevice;
 import com.example.user.emilia.model.GetSecondaryDevice;
 import com.example.user.emilia.model.GetUser;
-import com.example.user.emilia.model.History;
-import com.example.user.emilia.model.Nugen;
 import com.example.user.emilia.model.PostAdminDevice;
 import com.example.user.emilia.model.PostPrimaryDevice;
+import com.example.user.emilia.model.PostSecondaryDevice;
 import com.example.user.emilia.model.PostUser;
-import com.example.user.emilia.model.PrimaryDevice;
-import com.example.user.emilia.model.SecondaryDevice;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -108,5 +105,45 @@ public interface ApiInterface {
     @POST("memberdeviceman")
     Call<PostPrimaryDevice> postIdcheckPrimaryDevice( @Field("dvc_id") String dvc_id,
                                                       @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postEditNamePrimaryDevice( @Field("dvc_id") String dvc_id,
+                                                       @Field("dvc_name") String dvc_name,
+                                                       @Field("action") String action,
+                                                       @Field("part") String part);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postEditPasswordPrimaryDevice(  @Field("dvc_id") String dvc_id,
+                                                            @Field("dvc_password") String dvc_password,
+                                                            @Field("action") String action,
+                                                            @Field("part") String part);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postAddScPasswordPrimaryDevice(  @Field("dvc_id") String dvc_id,
+                                                            @Field("dvc_password_sc") String dvc_password,
+                                                            @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postDeletePrimaryDevice( @Field("dvc_id") String dvc_id,
+                                                      @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostSecondaryDevice> postAddSecondaryDevice(@Field("own_dvc_id") String dvc_id,
+                                                     @Field("own_email") String email,
+                                                     @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostSecondaryDevice> postAuthSecondaryDevice( @Field("dvc_id") String dvc_id,
+                                                       @Field("dvc_password_sc") String password,
+                                                       @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostSecondaryDevice> postIdcheckSecondaryDevice( @Field("dvc_id") String dvc_id,
+                                                          @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostSecondaryDevice> postDeleteSecondaryDevice( @Field("dvc_id") String dvc_id,
+                                                         @Field("email") String email,
+                                                         @Field("action") String action);
 //    ===========================
 }

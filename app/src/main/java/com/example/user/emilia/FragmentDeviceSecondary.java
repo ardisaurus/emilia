@@ -56,7 +56,10 @@ public class FragmentDeviceSecondary extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mApiInterface = ApiClient.getClient().create(ApiInterface.class);
         session = new SessionManager(MainActivity.ma);
-        refresh();
+        Boolean status = session.isLoggedIn();
+        if (status){
+            refresh();
+        }
         return view;
     }
 

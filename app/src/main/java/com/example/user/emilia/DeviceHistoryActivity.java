@@ -46,7 +46,6 @@ public class DeviceHistoryActivity extends AppCompatActivity {
         Intent i = getIntent();
         dvc_id = i.getStringExtra("dvc_id");
 
-
         final List<History> mHistory= new ArrayList<>();
         Call<GetHistory> history = mApiInterface.getHistory(dvc_id);
         history.enqueue(new Callback<GetHistory>() {

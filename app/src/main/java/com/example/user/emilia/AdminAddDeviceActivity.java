@@ -84,11 +84,11 @@ public class AdminAddDeviceActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onFailure(Call<PostAdminDevice> call, Throwable t) {
-                                    Toast.makeText(AdminAddDeviceActivity.this, "New passwords don't match", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AdminAddDeviceActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }else{
-                            Toast.makeText(AdminAddDeviceActivity.this, "New passwords don't match", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AdminAddDeviceActivity.this, "Passwords don't match", Toast.LENGTH_SHORT).show();
                         }
                     }else{
                         Toast.makeText(AdminAddDeviceActivity.this, "Password need to be between 8 to 12 character", Toast.LENGTH_SHORT).show();

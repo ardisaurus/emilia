@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             mApiInterface = ApiClient.getClient().create(ApiInterface.class);
             HashMap<String, String> user = session.getUserDetails();
             String level = user.get(SessionManager.KEY_LEVEL);
-            if (level.equals("admin")){
+            if (level.equals("admin")) {
                 setContentView(R.layout.activity_main_admin);
                 btnAdd = findViewById(R.id.btnAdd_mainadmin);
                 btnRegistered = findViewById(R.id.btnRegistered_mainadmin);
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onTabSelected(TabLayout.Tab tab) {
                         int tabPosition = tabLayout.getSelectedTabPosition();
-                        if (tabPosition==0){
+                        if (tabPosition == 0) {
                             btnAdd.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -95,15 +95,15 @@ public class MainActivity extends AppCompatActivity {
                             btnRegistered.setVisibility(View.VISIBLE);
                             btnRegistered.setOnClickListener(new View.OnClickListener() {
                                 @Override
-                                 public void onClick(View v) {
-                                     Intent i = new Intent(getApplicationContext(), AdminDeviceRegisteredActivity.class);
-                                     startActivity(i);
-                                 }
+                                public void onClick(View v) {
+                                    Intent i = new Intent(getApplicationContext(), AdminDeviceRegisteredActivity.class);
+                                    startActivity(i);
+                                }
                             });
                         }
-                        if (tabPosition==1){
+                        if (tabPosition == 1) {
                             btnAdd.setOnClickListener(new View.OnClickListener() {
-                            @Override
+                                @Override
                                 public void onClick(View v) {
                                     Intent i = new Intent(getApplicationContext(), AdminAddAdminActivity.class);
                                     startActivity(i);
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onTabUnselected(TabLayout.Tab tab) {
                         int tabPosition = tabLayout.getSelectedTabPosition();
-                        if (tabPosition==0){
+                        if (tabPosition == 0) {
                             btnRegistered.setVisibility(View.GONE);
                         }
                     }
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-            }else{
+            }else if (level.equals("member")){
                 setContentView(R.layout.activity_main);
                 btnAdd = findViewById(R.id.btnAdd_main);
                 btnAdd.setOnClickListener(new View.OnClickListener() {

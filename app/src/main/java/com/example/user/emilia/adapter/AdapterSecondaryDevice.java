@@ -10,13 +10,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.user.emilia.DeviceAddSecondaryActivity;
 import com.example.user.emilia.DeviceUnlockSecondaryActivity;
+import com.example.user.emilia.FragmentDeviceSecondary;
 import com.example.user.emilia.MainActivity;
 import com.example.user.emilia.R;
+import com.example.user.emilia.SessionManager;
+import com.example.user.emilia.model.PostSecondaryDevice;
 import com.example.user.emilia.model.SecondaryDevice;
+import com.example.user.emilia.rest.ApiClient;
+import com.example.user.emilia.rest.ApiInterface;
 
+import java.util.HashMap;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AdapterSecondaryDevice extends RecyclerView.Adapter<AdapterSecondaryDevice.ViewHolder> {
     public List<SecondaryDevice> mSecondaryDevice;
@@ -35,6 +47,12 @@ public class AdapterSecondaryDevice extends RecyclerView.Adapter<AdapterSecondar
     public void onBindViewHolder(@NonNull AdapterSecondaryDevice.ViewHolder holder, int position) {
         final SecondaryDevice secondarydevice = mSecondaryDevice.get(position);
         String lockStatus;
+        SessionManager session;
+        final ApiInterface mApiInterface;
+        mApiInterface = ApiClient.getClient().create(ApiInterface.class);
+        session = new SessionManager(MainActivity.ma);
+        HashMap<String, String> user = session.getUserDetails();
+        final String email = user.get(SessionManager.KEY_EMAIL);
         holder.dvc_id.setText(secondarydevice.getDvc_id());
         holder.dvc_name.setText(secondarydevice.getDvc_name());
         if (secondarydevice.getDvc_status().equals("1")){
@@ -59,7 +77,19 @@ public class AdapterSecondaryDevice extends RecyclerView.Adapter<AdapterSecondar
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                //delete
+                                Call<PostSecondaryDevice> postSecondaryDeviceCall = mApiInterface.postDeleteSecondaryDevice(secondarydevice.getDvc_id(), email ,"delete_sc");
+                                postSecondaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
+                                    @Override
+                                    public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
+                                        FragmentDeviceSecondary.fds.refresh();
+                                        Toast.makeText(MainActivity.ma, "Device has been deleted", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
+                                        Toast.makeText(MainActivity.ma, "Connection fail", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -44,6 +44,7 @@ public class SessionManager {
     }
 
     public void logoutUser(){
+        editor.putBoolean(IS_LOGIN, false);
         editor.clear();
         editor.commit();
     }

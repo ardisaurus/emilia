@@ -7,6 +7,9 @@ import android.view.View;
 import android.widget.Button;
 
 public class DeviceEditActivity extends AppCompatActivity {
+    public DeviceEditActivity (){}
+
+    public static DeviceEditActivity dea;
     private Button btnName, btnPassword, btnSecondary, btnDelete;
 
     @Override
@@ -14,6 +17,10 @@ public class DeviceEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_edit);
         setTitle("Edit Device");
+        dea = this;
+
+        Intent i = getIntent();
+        final String dvc_id = i.getStringExtra("dvc_id");
 
         btnName = findViewById(R.id.btnName_deviceedit);
         btnPassword = findViewById(R.id.btnPassword_deviceedit);
@@ -24,6 +31,7 @@ public class DeviceEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), DeviceEditNameActivity.class);
+                i.putExtra("dvc_id",dvc_id);
                 startActivity(i);
             }
         });
@@ -31,6 +39,7 @@ public class DeviceEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), DeviceEditPasswordActivity.class);
+                i.putExtra("dvc_id",dvc_id);
                 startActivity(i);
             }
         });
@@ -38,6 +47,7 @@ public class DeviceEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), DeviceEditSecondaryAccessActivity.class);
+                i.putExtra("dvc_id",dvc_id);
                 startActivity(i);
             }
         });
@@ -45,6 +55,7 @@ public class DeviceEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), DeviceEditDeleteActivity.class);
+                i.putExtra("dvc_id",dvc_id);
                 startActivity(i);
             }
         });

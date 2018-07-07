@@ -9,11 +9,14 @@ public class PrimaryDevice {
     private String dvc_name;
     @SerializedName("dvc_status")
     private String dvc_status;
+    @SerializedName("status")
+    private String status;
 
     public PrimaryDevice(String dvc_id, String dvc_name, String dvc_status) {
         this.dvc_id = dvc_id;
         this.dvc_name = dvc_name;
         this.dvc_status = dvc_status;
+        this.status = status;
     }
 
     public String getDvc_id() {
@@ -38,5 +41,13 @@ public class PrimaryDevice {
 
     public void setDvc_status(String dvc_status) {
         this.dvc_status = dvc_status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
