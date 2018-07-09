@@ -125,7 +125,14 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("memberdeviceman")
     Call<PostPrimaryDevice> postDeletePrimaryDevice( @Field("dvc_id") String dvc_id,
-                                                      @Field("action") String action);
+                                                     @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postForgetPasswordPrimaryDevice( @Field("email") String email,
+                                                             @Field("password") String password,
+                                                             @Field("dvc_id") String dvc_id,
+                                                             @Field("dvc_password") String dvc_password,
+                                                             @Field("action") String action);
     @FormUrlEncoded
     @POST("memberdeviceman")
     Call<PostSecondaryDevice> postAddSecondaryDevice(@Field("own_dvc_id") String dvc_id,
