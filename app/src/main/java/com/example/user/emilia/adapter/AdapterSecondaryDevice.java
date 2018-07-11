@@ -57,18 +57,38 @@ public class AdapterSecondaryDevice extends RecyclerView.Adapter<AdapterSecondar
         holder.dvc_name.setText(secondarydevice.getDvc_name());
         if (secondarydevice.getDvc_status().equals("1")){
             lockStatus = "Open";
+            holder.btnLock.setText("Lock");
+            holder.btnLock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Call<PostSecondaryDevice> postSecondaryDeviceCall = mApiInterface.postIdcheckSecondaryDevice(secondarydevice.getDvc_id(), "unlock");
+                    postSecondaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
+                        @Override
+                        public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
+                            FragmentDeviceSecondary.fds.refresh();
+                            Toast.makeText(MainActivity.ma, "Device Locked", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
+                            Toast.makeText(MainActivity.ma, "Connection fail", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
         }else{
             lockStatus = "Close";
+            holder.btnLock.setText("Unlock");
+            holder.btnLock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(MainActivity.ma, DeviceUnlockSecondaryActivity.class);
+                    i.putExtra("dvc_id",secondarydevice.getDvc_id());
+                    MainActivity.ma.startActivity(i);
+                }
+            });
         }
         holder.dvc_status.setText(lockStatus);
-        holder.btnLock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.ma, DeviceUnlockSecondaryActivity.class);
-                i.putExtra("dvc_id",secondarydevice.getDvc_id());
-                MainActivity.ma.startActivity(i);
-            }
-        });
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -8,15 +8,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.emilia.DeviceEditActivity;
 import com.example.user.emilia.DeviceHistoryActivity;
 import com.example.user.emilia.DeviceUnlockActivity;
+import com.example.user.emilia.FragmentDevicePrimary;
 import com.example.user.emilia.MainActivity;
 import com.example.user.emilia.R;
+import com.example.user.emilia.model.PostPrimaryDevice;
 import com.example.user.emilia.model.PrimaryDevice;
+import com.example.user.emilia.rest.ApiClient;
+import com.example.user.emilia.rest.ApiInterface;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AdapterPrimaryDevice extends android.support.v7.widget.RecyclerView.Adapter<AdapterPrimaryDevice.ViewHolder> {
     public List<PrimaryDevice> mPrimaryDevice;
@@ -37,20 +46,42 @@ public class AdapterPrimaryDevice extends android.support.v7.widget.RecyclerView
         String lockStatus;
         holder.dvc_id.setText(primarydevice.getDvc_id());
         holder.dvc_name.setText(primarydevice.getDvc_name());
+        final ApiInterface mApiInterface;
+        mApiInterface = ApiClient.getClient().create(ApiInterface.class);
         if (primarydevice.getDvc_status().equals("1")){
             lockStatus = "Open";
+            holder.btnUnlock.setText("Lock");
+            holder.btnUnlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Call<PostPrimaryDevice> postSecondaryDeviceCall = mApiInterface.postIdcheckPrimaryDevice(primarydevice.getDvc_id(), "unlock");
+                    postSecondaryDeviceCall.enqueue(new Callback<PostPrimaryDevice>() {
+                        @Override
+                        public void onResponse(Call<PostPrimaryDevice> call, Response<PostPrimaryDevice> response) {
+                            FragmentDevicePrimary.fdp.refresh();
+                            Toast.makeText(MainActivity.ma, "Device Locked", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Call<PostPrimaryDevice> call, Throwable t) {
+                            Toast.makeText(MainActivity.ma, "Connection fail", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
         }else{
             lockStatus = "Close";
+            holder.btnUnlock.setText("Unlock");
+            holder.btnUnlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(MainActivity.ma, DeviceUnlockActivity.class);
+                    i.putExtra("dvc_id",primarydevice.getDvc_id());
+                    MainActivity.ma.startActivity(i);
+                }
+            });
         }
         holder.dvc_status.setText(lockStatus);
-        holder.btnUnlock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.ma, DeviceUnlockActivity.class);
-                i.putExtra("dvc_id",primarydevice.getDvc_id());
-                MainActivity.ma.startActivity(i);
-            }
-        });
         holder.btnHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
