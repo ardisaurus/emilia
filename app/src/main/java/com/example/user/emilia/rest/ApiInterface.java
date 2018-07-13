@@ -127,14 +127,24 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("memberdeviceman")
     Call<PostPrimaryDevice> postUnlockPrimaryDevice( @Field("email") String email,
-                                                         @Field("dvc_id") String dvc_id,
-                                                         @Field("dvc_password") String password,
-                                                         @Field("action") String action);
+                                                     @Field("dvc_id") String dvc_id,
+                                                     @Field("dvc_password") String password,
+                                                     @Field("action") String action);
     @FormUrlEncoded
     @POST("memberdeviceman")
     Call<PostSecondaryDevice> postUnlockSecondaryDevice( @Field("email") String email,
                                                          @Field("dvc_id") String dvc_id,
                                                          @Field("dvc_password_sc") String password,
+                                                         @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postLockPrimaryDevice( @Field("email") String email,
+                                                     @Field("dvc_id") String dvc_id,
+                                                     @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostSecondaryDevice> postLockSecondaryDevice( @Field("email") String email,
+                                                         @Field("dvc_id") String dvc_id,
                                                          @Field("action") String action);
     @FormUrlEncoded
     @POST("memberdeviceman")

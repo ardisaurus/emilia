@@ -16,11 +16,13 @@ import com.example.user.emilia.DeviceUnlockActivity;
 import com.example.user.emilia.FragmentDevicePrimary;
 import com.example.user.emilia.MainActivity;
 import com.example.user.emilia.R;
+import com.example.user.emilia.SessionManager;
 import com.example.user.emilia.model.PostPrimaryDevice;
 import com.example.user.emilia.model.PrimaryDevice;
 import com.example.user.emilia.rest.ApiClient;
 import com.example.user.emilia.rest.ApiInterface;
 
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -44,6 +46,9 @@ public class AdapterPrimaryDevice extends android.support.v7.widget.RecyclerView
     public void onBindViewHolder(@NonNull AdapterPrimaryDevice.ViewHolder holder, int position) {
         final PrimaryDevice primarydevice = mPrimaryDevice.get(position);
         String lockStatus;
+        SessionManager session;session = new SessionManager(MainActivity.ma);
+        HashMap<String, String> user = session.getUserDetails();
+        final String email = user.get(SessionManager.KEY_EMAIL);
         holder.dvc_id.setText(primarydevice.getDvc_id());
         holder.dvc_name.setText(primarydevice.getDvc_name());
         final ApiInterface mApiInterface;
@@ -54,7 +59,7 @@ public class AdapterPrimaryDevice extends android.support.v7.widget.RecyclerView
             holder.btnUnlock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Call<PostPrimaryDevice> postSecondaryDeviceCall = mApiInterface.postIdcheckPrimaryDevice(primarydevice.getDvc_id(), "unlock");
+                    Call<PostPrimaryDevice> postSecondaryDeviceCall = mApiInterface.postLockPrimaryDevice(email, primarydevice.getDvc_id(), "lock");
                     postSecondaryDeviceCall.enqueue(new Callback<PostPrimaryDevice>() {
                         @Override
                         public void onResponse(Call<PostPrimaryDevice> call, Response<PostPrimaryDevice> response) {

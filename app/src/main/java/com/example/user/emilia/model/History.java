@@ -11,14 +11,17 @@ public class History {
     String time;
     @SerializedName("hst_date")
     String date;
+    @SerializedName("hst_status")
+    String status;
     @SerializedName("latest_access")
     String latest_access;
 
-    public History(String name, String email, String time, String date, String latest_access) {
+    public History(String name, String email, String time, String date, String status, String latest_access) {
         this.name = name;
         this.email = email;
         this.time = time;
         this.date = date;
+        this.status = status;
         this.latest_access = latest_access;
     }
 
@@ -52,6 +55,14 @@ public class History {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getLatest_access() {

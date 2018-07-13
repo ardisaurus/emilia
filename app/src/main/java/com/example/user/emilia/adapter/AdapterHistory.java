@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.emilia.R;
 import com.example.user.emilia.model.History;
@@ -27,6 +28,11 @@ public class AdapterHistory extends RecyclerView.Adapter<AdapterHistory.ViewHold
     @Override
     public void onBindViewHolder(@NonNull AdapterHistory.ViewHolder holder, int position) {
         History history = mHistory.get(position);
+        if(history.getStatus().equals("1")){
+            holder.lblStatus.setText("Opened by");
+        }else{
+            holder.lblStatus.setText("Closed by");
+        }
         holder.lblEmail.setText(history.getEmail());
         holder.lblName.setText(history.getName());
         holder.lblTime.setText(history.getDate()+" / "+history.getTime());
@@ -38,9 +44,10 @@ public class AdapterHistory extends RecyclerView.Adapter<AdapterHistory.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView lblEmail, lblName, lblTime;
+        TextView lblEmail, lblName, lblTime, lblStatus;
         public ViewHolder(View itemView) {
             super(itemView);
+            lblStatus = itemView.findViewById(R.id.lblStatusHistory_list);
             lblEmail = itemView.findViewById(R.id.lblEmailHistory_list);
             lblName = itemView.findViewById(R.id.lblNameHistory_list);
             lblTime = itemView.findViewById(R.id.lblTimeHistory_list);

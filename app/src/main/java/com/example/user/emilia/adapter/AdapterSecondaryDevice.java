@@ -61,7 +61,7 @@ public class AdapterSecondaryDevice extends RecyclerView.Adapter<AdapterSecondar
             holder.btnLock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Call<PostSecondaryDevice> postSecondaryDeviceCall = mApiInterface.postIdcheckSecondaryDevice(secondarydevice.getDvc_id(), "unlock");
+                    Call<PostSecondaryDevice> postSecondaryDeviceCall = mApiInterface.postLockSecondaryDevice(email, secondarydevice.getDvc_id(), "lock");
                     postSecondaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
                         @Override
                         public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
