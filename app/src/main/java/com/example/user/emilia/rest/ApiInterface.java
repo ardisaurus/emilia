@@ -84,6 +84,8 @@ public interface ApiInterface {
                                              @Field("action") String action);
 //    ===========================
 //    ====== Member Device ======
+    @GET("latestaccess")
+    Call<GetHistory> getLatestAccess(@retrofit2.http.Query("email") String email);
     @GET("memberdeviceman")
     Call<GetPrimaryDevice> getPrimaryDevice(@retrofit2.http.Query("email") String email);
     @GET("memberdeviceman")

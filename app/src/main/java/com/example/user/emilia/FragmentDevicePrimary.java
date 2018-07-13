@@ -13,7 +13,9 @@ import android.widget.Toast;
 
 import com.example.user.emilia.adapter.AdapterPrimaryDevice;
 import com.example.user.emilia.model.Admin;
+import com.example.user.emilia.model.GetHistory;
 import com.example.user.emilia.model.GetPrimaryDevice;
+import com.example.user.emilia.model.History;
 import com.example.user.emilia.model.PrimaryDevice;
 import com.example.user.emilia.rest.ApiClient;
 import com.example.user.emilia.rest.ApiInterface;
@@ -21,6 +23,8 @@ import com.example.user.emilia.rest.ApiInterface;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +50,7 @@ public class FragmentDevicePrimary extends Fragment {
     ApiInterface mApiInterface;
     public static FragmentDevicePrimary fdp;
     private PrimaryDevice device;
+    String mLatestAccess = "0";
 
     @Nullable
     @Override
@@ -56,9 +61,34 @@ public class FragmentDevicePrimary extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mApiInterface = ApiClient.getClient().create(ApiInterface.class);
         session = new SessionManager(MainActivity.ma);
-        Boolean status = session.isLoggedIn();
+        final Boolean status = session.isLoggedIn();
         if (status){
             refresh();
+            new Timer().scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    HashMap<String, String> user1 = session.getUserDetails();
+                    String email = user1.get(SessionManager.KEY_EMAIL);
+
+                    Call<GetHistory> userCall = mApiInterface.getLatestAccess(email);
+                    userCall.enqueue(new Callback<GetHistory>() {
+                        @Override
+                        public void onResponse(Call<GetHistory> call, Response<GetHistory> response) {
+                            List<History> listLatestAccess = response.body().getListHitory();
+                            if (!listLatestAccess.get(0).getLatest_access().equals(mLatestAccess) && !listLatestAccess.get(0).getLatest_access().equals(" ")&&!listLatestAccess.get(0).getLatest_access().isEmpty()){
+                                refresh();
+                                FragmentDeviceSecondary.fds.refresh();
+                                mLatestAccess=listLatestAccess.get(0).getLatest_access();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<GetHistory> call, Throwable t) {
+
+                        }
+                    });
+                }
+            }, 0, 10000);
         }
         return view;
     }
