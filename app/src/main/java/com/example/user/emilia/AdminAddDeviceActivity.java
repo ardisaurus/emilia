@@ -71,7 +71,7 @@ public class AdminAddDeviceActivity extends AppCompatActivity {
                     String dvc_id = lblDvc_id.getText().toString();
                     final String password1 = txtPassword1.getText().toString();
                     String password2 = txtPassword2.getText().toString();
-                    if (password1.length()>=8 && password1.length()<=12) {
+                    if (password1.length()==16) {
                         if (password1.equals(password2)) {
                             Call<PostAdminDevice> postAdminDeviceCall = mApiInterface.postAddAdminDevice(dvc_id, md5(password1), "insert");
                             postAdminDeviceCall.enqueue(new Callback<PostAdminDevice>() {

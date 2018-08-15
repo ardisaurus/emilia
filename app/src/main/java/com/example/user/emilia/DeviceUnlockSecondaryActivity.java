@@ -9,6 +9,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.emilia.model.Crypto;
+import com.example.user.emilia.model.GetCrypto;
+import com.example.user.emilia.model.PostCrypto;
 import com.example.user.emilia.model.PostSecondaryDevice;
 import com.example.user.emilia.rest.ApiClient;
 import com.example.user.emilia.rest.ApiInterface;
@@ -17,6 +20,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,38 +54,91 @@ public class DeviceUnlockSecondaryActivity extends AppCompatActivity {
                 }else{
                     final String dvc_id = lblDvc_id.getText().toString();
                     final String password = txtPassword.getText().toString();
-                    if (password.length()>=8 && password.length()<=12) {
-                        Call<PostSecondaryDevice> postSecondaryDeviceCall = mApiInterface.postAuthSecondaryDevice(dvc_id, md5(password) ,"auth_sc");
-                        postSecondaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
-                            @Override
-                            public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
-                                if(response.body().getmSecondaryDevice().getStatus().equals("success")){
-                                    HashMap<String, String> user = session.getUserDetails();
-                                    String email = user.get(SessionManager.KEY_EMAIL);
-                                    Call<PostSecondaryDevice> postSecondaryDeviceCall = mApiInterface.postUnlockSecondaryDevice(email, dvc_id, md5(password) ,"unlock_sc");
-                                    postSecondaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
+                    if (password.length()==16) {
+                            Call<PostCrypto> postCryptoCall = mApiInterface.postRequest(dvc_id, "create");
+                            postCryptoCall.enqueue(new Callback<PostCrypto>() {
+                                @Override
+                                public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
+                                    String public_key= response.body().getmCrypto().getPublic_key();
+                                    String modulo = response.body().getmCrypto().getModulo();
+                                    final String session_id = response.body().getmCrypto().getSession_id();
+                                    String aes_key=Aes.getSaltString();;
+                                    final String cipheraes = Aes.encrypt(password, aes_key);
+                                    Call<GetCrypto> postCryptoCall = mApiInterface.getCrypto(session_id, aes_key);
+                                    postCryptoCall.enqueue(new Callback<GetCrypto>() {
                                         @Override
-                                        public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
-                                            finish();
-                                            FragmentDeviceSecondary.fds.refresh();
-                                            Toast.makeText(MainActivity.ma, "Device Unlocked", Toast.LENGTH_SHORT).show();
+                                        public void onResponse(Call<GetCrypto> call, Response<GetCrypto> response) {
+                                            final List<Crypto> CryptoList = response.body().getListDataCrypto();
+                                            final String cipherrsa = CryptoList.get(0).getCipher();
+                                            Call<PostSecondaryDevice> postPrimaryDeviceCall = mApiInterface.postAuthSecondaryDevice(dvc_id, session_id, cipheraes, cipherrsa, "auth_sc");
+                                            postPrimaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
+                                                @Override
+                                                public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
+                                                    if(response.body().getmSecondaryDevice().getStatus().equals("success")){
+                                                        HashMap<String, String> user = session.getUserDetails();
+                                                        String email = user.get(SessionManager.KEY_EMAIL);
+                                                        Call<PostSecondaryDevice> postSecondaryDeviceCall = mApiInterface.postUnlockSecondaryDevice(email, dvc_id ,"unlock_sc");
+                                                        postSecondaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
+                                                            @Override
+                                                            public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
+                                                                Call<PostCrypto> postDeleteSessionCall = mApiInterface.postDeleteSession(session_id, "delete_session");
+                                                                postDeleteSessionCall.enqueue(new Callback<PostCrypto>() {
+                                                                    @Override
+                                                                    public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
+                                                                        finish();
+                                                                        FragmentDeviceSecondary.fds.refresh();
+                                                                        Toast.makeText(MainActivity.ma, "Device Unlocked", Toast.LENGTH_SHORT).show();
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onFailure(Call<PostCrypto> call, Throwable t) {
+                                                                        Toast.makeText(DeviceUnlockSecondaryActivity.this, "Session not removed", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            @Override
+                                                            public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
+                                                                Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                                    }else{
+                                                        Call<PostCrypto> postDeleteSessionCall = mApiInterface.postDeleteSession(session_id, "delete_session");
+                                                        postDeleteSessionCall.enqueue(new Callback<PostCrypto>() {
+                                                            @Override
+                                                            public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
+                                                                Toast.makeText(DeviceUnlockSecondaryActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
+                                                            }
+
+                                                            @Override
+                                                            public void onFailure(Call<PostCrypto> call, Throwable t) {
+                                                                Toast.makeText(DeviceUnlockSecondaryActivity.this, "Session not removed", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
+                                                    Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
                                         }
 
                                         @Override
-                                        public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
+                                        public void onFailure(Call<GetCrypto> call, Throwable t) {
                                             Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
                                         }
                                     });
-                                }else{
-                                    Toast.makeText(DeviceUnlockSecondaryActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
-                                }
-                            }
 
-                            @Override
-                            public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
-                                Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                                }
+
+                                @Override
+                                public void onFailure(Call<PostCrypto> call, Throwable t) {
+                                    Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                     }else{
                         Toast.makeText(DeviceUnlockSecondaryActivity.this, "Password need to be between 8 to 12 character", Toast.LENGTH_SHORT).show();
                     }

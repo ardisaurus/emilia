@@ -1,6 +1,7 @@
 package com.example.user.emilia.rest;
 import com.example.user.emilia.model.GetAdmin;
 import com.example.user.emilia.model.GetAdminDevice;
+import com.example.user.emilia.model.GetCrypto;
 import com.example.user.emilia.model.GetHistory;
 import com.example.user.emilia.model.GetNugen;
 import com.example.user.emilia.model.GetPrimaryDevice;
@@ -8,6 +9,7 @@ import com.example.user.emilia.model.GetRegisteredDevice;
 import com.example.user.emilia.model.GetSecondaryDevice;
 import com.example.user.emilia.model.GetUser;
 import com.example.user.emilia.model.PostAdminDevice;
+import com.example.user.emilia.model.PostCrypto;
 import com.example.user.emilia.model.PostPrimaryDevice;
 import com.example.user.emilia.model.PostSecondaryDevice;
 import com.example.user.emilia.model.PostUser;
@@ -101,7 +103,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("memberdeviceman")
     Call<PostPrimaryDevice> postAuthPrimaryDevice( @Field("dvc_id") String dvc_id,
-                                                   @Field("dvc_password") String password,
+                                                   @Field("session_id") String session_id,
+                                                   @Field("cipher_aes") String cipher_aes,
+                                                   @Field("cipher_rsa") String cipher_rsa,
                                                    @Field("action") String action);
     @FormUrlEncoded
     @POST("memberdeviceman")
@@ -121,20 +125,18 @@ public interface ApiInterface {
                                                             @Field("part") String part);
     @FormUrlEncoded
     @POST("memberdeviceman")
-    Call<PostPrimaryDevice> postAddScPasswordPrimaryDevice(  @Field("dvc_id") String dvc_id,
+    Call<PostPrimaryDevice> postAddScPasswordPrimaryDevice( @Field("dvc_id") String dvc_id,
                                                             @Field("dvc_password_sc") String dvc_password,
                                                             @Field("action") String action);
     @FormUrlEncoded
     @POST("memberdeviceman")
     Call<PostPrimaryDevice> postUnlockPrimaryDevice( @Field("email") String email,
                                                      @Field("dvc_id") String dvc_id,
-                                                     @Field("dvc_password") String password,
                                                      @Field("action") String action);
     @FormUrlEncoded
     @POST("memberdeviceman")
     Call<PostSecondaryDevice> postUnlockSecondaryDevice( @Field("email") String email,
                                                          @Field("dvc_id") String dvc_id,
-                                                         @Field("dvc_password_sc") String password,
                                                          @Field("action") String action);
     @FormUrlEncoded
     @POST("memberdeviceman")
@@ -165,7 +167,9 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("memberdeviceman")
     Call<PostSecondaryDevice> postAuthSecondaryDevice( @Field("dvc_id") String dvc_id,
-                                                       @Field("dvc_password_sc") String password,
+                                                       @Field("session_id") String session_id,
+                                                       @Field("cipher_aes") String cipher_aes,
+                                                       @Field("cipher_rsa") String cipher_rsa,
                                                        @Field("action") String action);
     @FormUrlEncoded
     @POST("memberdeviceman")
@@ -176,5 +180,15 @@ public interface ApiInterface {
     Call<PostSecondaryDevice> postDeleteSecondaryDevice( @Field("dvc_id") String dvc_id,
                                                          @Field("email") String email,
                                                          @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostCrypto> postDeleteSession( @Field("session_id") String session_id,
+                                                @Field("action") String action);
 //    ===========================
+    @GET("crypto")
+    Call<GetCrypto> getCrypto(@retrofit2.http.Query("session_id") String session_id, @retrofit2.http.Query("plain") String plain);
+
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostCrypto> postRequest(@Field("dvc_id") String dvc_id, @Field("action") String action);
 }

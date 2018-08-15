@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.user.emilia.model.Crypto;
+import com.example.user.emilia.model.GetCrypto;
+import com.example.user.emilia.model.PostCrypto;
 import com.example.user.emilia.model.PostPrimaryDevice;
 import com.example.user.emilia.rest.ApiClient;
 import com.example.user.emilia.rest.ApiInterface;
@@ -15,6 +18,7 @@ import com.example.user.emilia.rest.ApiInterface;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,36 +47,89 @@ public class DeviceEditPasswordActivity extends AppCompatActivity {
                 if (txtOldPassword.getText().toString().isEmpty() || txtNewPassword1.getText().toString().isEmpty() || txtNewPassword2.getText().toString().isEmpty()){
                     Toast.makeText(DeviceEditPasswordActivity.this, "Fill every available form", Toast.LENGTH_SHORT).show();
                 }else{
-                    String OldPassword = txtOldPassword.getText().toString();
+                    final String OldPassword = txtOldPassword.getText().toString();
                     final String NewPassword1 = txtNewPassword1.getText().toString();
                     String NewPassword2 = txtNewPassword2.getText().toString();
-                    if (OldPassword.length()>=8 && OldPassword.length()<=12 && NewPassword1.length()>=8 && NewPassword1.length()<=12){
+                    if (OldPassword.length()==16 && NewPassword1.length()==16){
                         if (NewPassword1.equals(NewPassword2)){
-                            Call<PostPrimaryDevice> postPrimaryDeviceCall = mApiInterface.postAuthPrimaryDevice(dvc_id, md5(OldPassword) ,"auth");
-                            postPrimaryDeviceCall.enqueue(new Callback<PostPrimaryDevice>() {
+                            Call<PostCrypto> postCryptoCall = mApiInterface.postRequest(dvc_id, "create");
+                            postCryptoCall.enqueue(new Callback<PostCrypto>() {
                                 @Override
-                                public void onResponse(Call<PostPrimaryDevice> call, Response<PostPrimaryDevice> response) {
-                                    if(response.body().getmPrimaryDevice().getStatus().equals("success")){
-                                        Call<PostPrimaryDevice> postPrimaryDeviceCall = mApiInterface.postEditPasswordPrimaryDevice(dvc_id, md5(NewPassword1) ,"update", "password");
-                                        postPrimaryDeviceCall.enqueue(new Callback<PostPrimaryDevice>() {
-                                            @Override
-                                            public void onResponse(Call<PostPrimaryDevice> call, Response<PostPrimaryDevice> response) {
-                                                finish();
-                                                Toast.makeText(DeviceEditActivity.dea, "Password has been changed", Toast.LENGTH_SHORT).show();
-                                            }
+                                public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
+                                    String public_key= response.body().getmCrypto().getPublic_key();
+                                    String modulo = response.body().getmCrypto().getModulo();
+                                    final String session_id = response.body().getmCrypto().getSession_id();
+                                    String aes_key=Aes.getSaltString();;
+                                    final String cipheraes = Aes.encrypt(OldPassword, aes_key);
+                                    Call<GetCrypto> postCryptoCall = mApiInterface.getCrypto(session_id, aes_key);
+                                    postCryptoCall.enqueue(new Callback<GetCrypto>() {
+                                        @Override
+                                        public void onResponse(Call<GetCrypto> call, Response<GetCrypto> response) {
+                                            final List<Crypto> CryptoList = response.body().getListDataCrypto();
+                                            final String cipherrsa = CryptoList.get(0).getCipher();
+                                            Call<PostPrimaryDevice> postPrimaryDeviceCall = mApiInterface.postAuthPrimaryDevice( dvc_id, session_id, cipheraes, cipherrsa, "auth");
+                                            postPrimaryDeviceCall.enqueue(new Callback<PostPrimaryDevice>() {
+                                                @Override
+                                                public void onResponse(Call<PostPrimaryDevice> call, Response<PostPrimaryDevice> response) {
+                                                    if(response.body().getmPrimaryDevice().getStatus().equals("success")){
+                                                        Call<PostPrimaryDevice> postPrimaryDeviceCall = mApiInterface.postEditPasswordPrimaryDevice(dvc_id, NewPassword1 ,"update", "password");
+                                                        postPrimaryDeviceCall.enqueue(new Callback<PostPrimaryDevice>() {
+                                                            @Override
+                                                            public void onResponse(Call<PostPrimaryDevice> call, Response<PostPrimaryDevice> response) {
+                                                                Call<PostCrypto> postDeleteSessionCall = mApiInterface.postDeleteSession(session_id, "delete_session");
+                                                                postDeleteSessionCall.enqueue(new Callback<PostCrypto>() {
+                                                                    @Override
+                                                                    public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
+                                                                        finish();
+                                                                        Toast.makeText(DeviceEditActivity.dea, "Password has been changed", Toast.LENGTH_SHORT).show();
+                                                                    }
 
-                                            @Override
-                                            public void onFailure(Call<PostPrimaryDevice> call, Throwable t) {
-                                                Toast.makeText(DeviceEditPasswordActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                    }else{
-                                        Toast.makeText(DeviceEditPasswordActivity.this, "Wrong old password", Toast.LENGTH_SHORT).show();
-                                    }
+                                                                    @Override
+                                                                    public void onFailure(Call<PostCrypto> call, Throwable t) {
+                                                                        Toast.makeText(DeviceEditPasswordActivity.this, "Session not removed", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            @Override
+                                                            public void onFailure(Call<PostPrimaryDevice> call, Throwable t) {
+                                                                Toast.makeText(DeviceEditPasswordActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                                    }else{
+                                                        Call<PostCrypto> postDeleteSessionCall = mApiInterface.postDeleteSession(session_id, "delete_session");
+                                                        postDeleteSessionCall.enqueue(new Callback<PostCrypto>() {
+                                                            @Override
+                                                            public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
+                                                                Toast.makeText(DeviceEditPasswordActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
+                                                            }
+
+                                                            @Override
+                                                            public void onFailure(Call<PostCrypto> call, Throwable t) {
+                                                                Toast.makeText(DeviceEditPasswordActivity.this, "Session not removed", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<PostPrimaryDevice> call, Throwable t) {
+                                                    Toast.makeText(DeviceEditPasswordActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<GetCrypto> call, Throwable t) {
+                                            Toast.makeText(DeviceEditPasswordActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
                                 }
 
                                 @Override
-                                public void onFailure(Call<PostPrimaryDevice> call, Throwable t) {
+                                public void onFailure(Call<PostCrypto> call, Throwable t) {
                                     Toast.makeText(DeviceEditPasswordActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -80,27 +137,10 @@ public class DeviceEditPasswordActivity extends AppCompatActivity {
                             Toast.makeText(DeviceEditPasswordActivity.this, "New passwords don't match", Toast.LENGTH_SHORT).show();
                         }
                     }else{
-                        Toast.makeText(DeviceEditPasswordActivity.this, "Password need to be between 8 to 12 character", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DeviceEditPasswordActivity.this, "Password need to be 16 character", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
-    }
-
-    private static String md5(String pass) {
-        String password = null;
-        MessageDigest mdEnc;
-        try {
-            mdEnc = MessageDigest.getInstance("MD5");
-            mdEnc.update(pass.getBytes(), 0, pass.length());
-            pass = new BigInteger(1, mdEnc.digest()).toString(16);
-            while (pass.length() < 32) {
-                pass = "0" + pass;
-            }
-            password = pass;
-        } catch (NoSuchAlgorithmException e1) {
-            e1.printStackTrace();
-        }
-        return password;
     }
 }
