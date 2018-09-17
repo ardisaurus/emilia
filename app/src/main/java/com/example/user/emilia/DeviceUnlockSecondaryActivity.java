@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import retrofit2.Response;
 
 public class DeviceUnlockSecondaryActivity extends AppCompatActivity {
     EditText txtPassword;
+    Switch swEncription;
     Button btnSubmit;
     TextView lblDvc_id;
     ApiInterface mApiInterface;
@@ -45,16 +47,18 @@ public class DeviceUnlockSecondaryActivity extends AppCompatActivity {
         lblDvc_id = findViewById(R.id.lblDeviceid_deviceunlocksecondary);
         lblDvc_id.setText(dvc_id);
         txtPassword = findViewById(R.id.txtPassword_deviceunlocksecondary);
+        swEncription = findViewById(R.id.swEncription_deviceunlocksecondary);
         btnSubmit = findViewById(R.id.btnSubmit_deviceunlocksecondary);
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (txtPassword.getText().toString().isEmpty()){
-                    Toast.makeText(DeviceUnlockSecondaryActivity.this, "Fill every available form", Toast.LENGTH_SHORT).show();
-                }else{
-                    final String dvc_id = lblDvc_id.getText().toString();
-                    final String password = txtPassword.getText().toString();
-                    if (password.length()==16) {
+                if(swEncription.isChecked()){
+                    if (txtPassword.getText().toString().isEmpty()){
+                        Toast.makeText(DeviceUnlockSecondaryActivity.this, "Fill every available form", Toast.LENGTH_SHORT).show();
+                    }else{
+                        final String dvc_id = lblDvc_id.getText().toString();
+                        final String password = txtPassword.getText().toString();
+                        if (password.length()==16) {
                             Call<PostCrypto> postCryptoCall = mApiInterface.postRequest(dvc_id, "create");
                             postCryptoCall.enqueue(new Callback<PostCrypto>() {
                                 @Override
@@ -139,29 +143,55 @@ public class DeviceUnlockSecondaryActivity extends AppCompatActivity {
                                     Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
                                 }
                             });
+                        }else{
+                            Toast.makeText(DeviceUnlockSecondaryActivity.this, "Password need to be 16 character", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }else{
+                    if (txtPassword.getText().toString().isEmpty()){
+                        Toast.makeText(DeviceUnlockSecondaryActivity.this, "Fill every available form", Toast.LENGTH_SHORT).show();
                     }else{
-                        Toast.makeText(DeviceUnlockSecondaryActivity.this, "Password need to be between 8 to 12 character", Toast.LENGTH_SHORT).show();
+                        final String dvc_id = lblDvc_id.getText().toString();
+                        final String password = txtPassword.getText().toString();
+                        if (password.length()==16) {
+                            Call<PostSecondaryDevice> postPrimaryDeviceCall = mApiInterface.postAuthSecondaryDeviceUnencripted(dvc_id, password, "auth_sc_unencripted");
+                            postPrimaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
+                                @Override
+                                public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
+                                    if(response.body().getmSecondaryDevice().getStatus().equals("success")){
+                                        HashMap<String, String> user = session.getUserDetails();
+                                        String email = user.get(SessionManager.KEY_EMAIL);
+                                        Call<PostSecondaryDevice> postSecondaryDeviceCall = mApiInterface.postUnlockSecondaryDevice(email, dvc_id ,"unlock_sc");
+                                        postSecondaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
+                                            @Override
+                                            public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
+                                                finish();
+                                                FragmentDeviceSecondary.fds.refresh();
+                                                Toast.makeText(MainActivity.ma, "Device Unlocked", Toast.LENGTH_SHORT).show();
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
+                                                Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }else{
+                                        Toast.makeText(DeviceUnlockSecondaryActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
+                                    Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }else{
+                            Toast.makeText(DeviceUnlockSecondaryActivity.this, "Password need to be 16 character", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
         });
 
-    }
-
-    private static String md5(String pass) {
-        String password = null;
-        MessageDigest mdEnc;
-        try {
-            mdEnc = MessageDigest.getInstance("MD5");
-            mdEnc.update(pass.getBytes(), 0, pass.length());
-            pass = new BigInteger(1, mdEnc.digest()).toString(16);
-            while (pass.length() < 32) {
-                pass = "0" + pass;
-            }
-            password = pass;
-        } catch (NoSuchAlgorithmException e1) {
-            e1.printStackTrace();
-        }
-        return password;
     }
 }

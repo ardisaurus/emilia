@@ -109,6 +109,11 @@ public interface ApiInterface {
                                                    @Field("action") String action);
     @FormUrlEncoded
     @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postAuthPrimaryDeviceUnencripted( @Field("dvc_id") String dvc_id,
+                                                              @Field("dvc_password") String dvc_password,
+                                                              @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
     Call<PostPrimaryDevice> postIdcheckPrimaryDevice( @Field("dvc_id") String dvc_id,
                                                       @Field("action") String action);
     @FormUrlEncoded
@@ -171,6 +176,11 @@ public interface ApiInterface {
                                                        @Field("cipher_aes") String cipher_aes,
                                                        @Field("cipher_rsa") String cipher_rsa,
                                                        @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostSecondaryDevice> postAuthSecondaryDeviceUnencripted( @Field("dvc_id") String dvc_id,
+                                                                  @Field("dvc_password") String dvc_password,
+                                                                  @Field("action") String action);
     @FormUrlEncoded
     @POST("memberdeviceman")
     Call<PostSecondaryDevice> postIdcheckSecondaryDevice( @Field("dvc_id") String dvc_id,

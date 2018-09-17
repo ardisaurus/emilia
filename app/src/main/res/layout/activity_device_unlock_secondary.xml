@@ -67,6 +67,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lblPassword_deviceunlocksecondary" />
 
+    <LinearLayout
+        android:id="@+id/linearLayout_deviceunlocksecondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtPassword_deviceunlocksecondary">
+
+        <TextView
+            android:id="@+id/lblEncription_deviceunlocksecondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Encription" />
+
+        <Switch
+            android:id="@+id/swEncription_deviceunlocksecondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            />
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/btnSubmit_deviceunlocksecondary"
         android:layout_width="match_parent"
@@ -78,7 +106,8 @@
         android:layout_marginTop="8dp"
         android:text="Submit"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtPassword_deviceunlocksecondary" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout_deviceunlocksecondary" />
 
 </android.support.constraint.ConstraintLayout>

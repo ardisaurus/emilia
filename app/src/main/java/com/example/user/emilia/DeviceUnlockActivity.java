@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import retrofit2.Response;
 
 public class DeviceUnlockActivity extends AppCompatActivity {
     EditText txtPassword;
+    Switch swEncription;
     Button btnSubmit;
     TextView lblForget, lblDvc_id;
     public static DeviceUnlockActivity dua;
@@ -56,20 +58,22 @@ public class DeviceUnlockActivity extends AppCompatActivity {
             }
         });
         txtPassword = findViewById(R.id.txtPassword_deviceunlock);
+        swEncription = findViewById(R.id.swEncription_deviceunlock);
         btnSubmit=findViewById(R.id.btnSubmit_deviceunlock);
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (txtPassword.getText().toString().isEmpty()){
-                    Toast.makeText(DeviceUnlockActivity.this, "Fill every available form", Toast.LENGTH_SHORT).show();
-                }else{
-                    final String dvc_id = lblDvc_id.getText().toString();
-                    final String password =txtPassword.getText().toString().trim();
-                    if(password.length()==16){
-                        Call<PostCrypto> postCryptoCall = mApiInterface.postRequest(dvc_id, "create");
-                        postCryptoCall.enqueue(new Callback<PostCrypto>() {
-                            @Override
-                            public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
+                if(swEncription.isChecked()){
+                    if (txtPassword.getText().toString().isEmpty()){
+                        Toast.makeText(DeviceUnlockActivity.this, "Fill every available form", Toast.LENGTH_SHORT).show();
+                    }else{
+                        final String dvc_id = lblDvc_id.getText().toString();
+                        final String password =txtPassword.getText().toString().trim();
+                        if(password.length()==16){
+                            Call<PostCrypto> postCryptoCall = mApiInterface.postRequest(dvc_id, "create");
+                            postCryptoCall.enqueue(new Callback<PostCrypto>() {
+                                @Override
+                                public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
                                     String public_key= response.body().getmCrypto().getPublic_key();
                                     String modulo = response.body().getmCrypto().getModulo();
                                     final String session_id = response.body().getmCrypto().getSession_id();
@@ -141,15 +145,58 @@ public class DeviceUnlockActivity extends AppCompatActivity {
                                             Toast.makeText(DeviceUnlockActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
                                         }
                                     });
-                            }
+                                }
 
-                            @Override
-                            public void onFailure(Call<PostCrypto> call, Throwable t) {
-                                Toast.makeText(DeviceUnlockActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                                @Override
+                                public void onFailure(Call<PostCrypto> call, Throwable t) {
+                                    Toast.makeText(DeviceUnlockActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }else{
+                            Toast.makeText(DeviceUnlockActivity.this, "Password have to be 16 character", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }else{
+                    if (txtPassword.getText().toString().isEmpty()){
+                        Toast.makeText(DeviceUnlockActivity.this, "Fill every available form", Toast.LENGTH_SHORT).show();
                     }else{
-                        Toast.makeText(DeviceUnlockActivity.this, "Password have to be 16 character", Toast.LENGTH_SHORT).show();
+                        final String dvc_id = lblDvc_id.getText().toString();
+                        final String password =txtPassword.getText().toString().trim();
+                        if(password.length()==16){
+                            Call<PostPrimaryDevice> postPrimaryDeviceCall = mApiInterface.postAuthPrimaryDeviceUnencripted(dvc_id, password, "auth_unencripted");
+                            postPrimaryDeviceCall.enqueue(new Callback<PostPrimaryDevice>() {
+                                @Override
+                                public void onResponse(Call<PostPrimaryDevice> call, Response<PostPrimaryDevice> response) {
+                                    if(response.body().getmPrimaryDevice().getStatus().equals("success")){
+                                        HashMap<String, String> user = session.getUserDetails();
+                                        String email = user.get(SessionManager.KEY_EMAIL);
+                                        Call<PostPrimaryDevice> postPrimaryDeviceCall = mApiInterface.postUnlockPrimaryDevice(email, dvc_id, "unlock");
+                                        postPrimaryDeviceCall.enqueue(new Callback<PostPrimaryDevice>() {
+                                            @Override
+                                            public void onResponse(Call<PostPrimaryDevice> call, Response<PostPrimaryDevice> response) {
+                                                finish();
+                                                FragmentDevicePrimary.fdp.refresh();
+                                                Toast.makeText(MainActivity.ma, "Device Unlocked", Toast.LENGTH_SHORT).show();
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<PostPrimaryDevice> call, Throwable t) {
+                                                Toast.makeText(DeviceUnlockActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }else{
+                                        Toast.makeText(DeviceUnlockActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<PostPrimaryDevice> call, Throwable t) {
+                                    Toast.makeText(DeviceUnlockActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }else{
+                            Toast.makeText(DeviceUnlockActivity.this, "Password have to be 16 character", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
