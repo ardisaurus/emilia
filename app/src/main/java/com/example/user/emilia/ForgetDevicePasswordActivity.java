@@ -52,41 +52,45 @@ public class ForgetDevicePasswordActivity extends AppCompatActivity {
                     final String OldPassword = txtOldPassword.getText().toString();
                     final String NewPassword1 = txtNewPassword1.getText().toString();
                     String NewPassword2 = txtNewPassword2.getText().toString();
-                    if (OldPassword.length()>=8 && OldPassword.length()<=12 && NewPassword1.length()>=8 && NewPassword1.length()<=12){
-                        if (NewPassword1.equals(NewPassword2)){
-                            Call<PostUser> postLoginCall = mApiInterface.postLogin(email, md5(OldPassword), "auth");
-                            postLoginCall.enqueue(new Callback<PostUser>() {
-                                @Override
-                                public void onResponse(Call<PostUser> call, Response<PostUser> response) {
-                                    if(response.body().getmUser().getStatus().equals("success")){
-                                        Call<PostPrimaryDevice> postPrimaryDeviceCall = mApiInterface.postForgetPasswordPrimaryDevice(email, md5(OldPassword),dvc_id, md5(NewPassword1) ,"forgot_password");
-                                        postPrimaryDeviceCall.enqueue(new Callback<PostPrimaryDevice>() {
-                                            @Override
-                                            public void onResponse(Call<PostPrimaryDevice> call, Response<PostPrimaryDevice> response) {
-                                                finish();
-                                                Toast.makeText(DeviceUnlockActivity.dua, "Password Has been changed", Toast.LENGTH_SHORT).show();
-                                            }
+                    if (OldPassword.length()>=8 && OldPassword.length()<=12){
+                        if (NewPassword1.length()==16){
+                            if (NewPassword1.equals(NewPassword2)){
+                                Call<PostUser> postLoginCall = mApiInterface.postLogin(email, md5(OldPassword), "auth");
+                                postLoginCall.enqueue(new Callback<PostUser>() {
+                                    @Override
+                                    public void onResponse(Call<PostUser> call, Response<PostUser> response) {
+                                        if(response.body().getmUser().getStatus().equals("success")){
+                                            Call<PostPrimaryDevice> postPrimaryDeviceCall = mApiInterface.postForgetPasswordPrimaryDevice(email, md5(OldPassword),dvc_id, md5(NewPassword1) ,"forgot_password");
+                                            postPrimaryDeviceCall.enqueue(new Callback<PostPrimaryDevice>() {
+                                                @Override
+                                                public void onResponse(Call<PostPrimaryDevice> call, Response<PostPrimaryDevice> response) {
+                                                    finish();
+                                                    Toast.makeText(DeviceUnlockActivity.dua, "Password Has been changed", Toast.LENGTH_SHORT).show();
+                                                }
 
-                                            @Override
-                                            public void onFailure(Call<PostPrimaryDevice> call, Throwable t) {
-                                                Toast.makeText(ForgetDevicePasswordActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                    }else{
-                                        Toast.makeText(ForgetDevicePasswordActivity.this, "Wrong account password", Toast.LENGTH_SHORT).show();
+                                                @Override
+                                                public void onFailure(Call<PostPrimaryDevice> call, Throwable t) {
+                                                    Toast.makeText(ForgetDevicePasswordActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }else{
+                                            Toast.makeText(ForgetDevicePasswordActivity.this, "Wrong account password", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                }
 
-                                @Override
-                                public void onFailure(Call<PostUser> call, Throwable t) {
-                                    Toast.makeText(ForgetDevicePasswordActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }else{
-                            Toast.makeText(ForgetDevicePasswordActivity.this, "New passwords don't match", Toast.LENGTH_SHORT).show();
+                                    @Override
+                                    public void onFailure(Call<PostUser> call, Throwable t) {
+                                        Toast.makeText(ForgetDevicePasswordActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }else{
+                                Toast.makeText(ForgetDevicePasswordActivity.this, "New passwords don't match", Toast.LENGTH_SHORT).show();
+                            }
+                        }else {
+                            Toast.makeText(ForgetDevicePasswordActivity.this, "New Password need to be 16 characters", Toast.LENGTH_SHORT).show();
                         }
                     }else{
-                        Toast.makeText(ForgetDevicePasswordActivity.this, "Password need to be between 8 to 12 character", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ForgetDevicePasswordActivity.this, "Account Password need to be between 8 to 12 characters", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

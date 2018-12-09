@@ -40,7 +40,9 @@
         <activity android:name=".AdminResetPasswordDeviceActivity" />
         <activity android:name=".AdminDeviceRegisteredActivity" />
         <activity android:name=".DeviceUnlockSecondaryActivity" />
-        <activity android:name=".ForgetDevicePasswordActivity"></activity>
+        <activity android:name=".ForgetDevicePasswordActivity" />
+        <activity android:name=".DeviceEditEncryptionActivity" />
+        <activity android:name=".AddressActivity"></activity>
     </application>
 
 </manifest>

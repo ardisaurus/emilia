@@ -41,6 +41,12 @@
                 android:text="id000" />
 
             <TextView
+                android:id="@+id/lblPrimaryDeviceEncryption_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Encription" />
+
+            <TextView
                 android:id="@+id/lblPrimaryDeviceStatus_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

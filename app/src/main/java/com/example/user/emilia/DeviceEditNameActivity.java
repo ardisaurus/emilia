@@ -26,7 +26,8 @@ public class DeviceEditNameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_edit_name);
         mApiInterface = ApiClient.getClient().create(ApiInterface.class);
-        setTitle("Edit Device : Name");Intent i = getIntent();
+        setTitle("Edit Device : Name");
+        Intent i = getIntent();
         final String dvc_id = i.getStringExtra("dvc_id");
 
         txtName = findViewById(R.id.txtName_deviceeditname);

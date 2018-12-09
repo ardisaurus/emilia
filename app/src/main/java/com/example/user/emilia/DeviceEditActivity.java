@@ -10,7 +10,7 @@ public class DeviceEditActivity extends AppCompatActivity {
     public DeviceEditActivity (){}
 
     public static DeviceEditActivity dea;
-    private Button btnName, btnPassword, btnSecondary, btnDelete;
+    private Button btnName, btnPassword, btnSecondary, btnDelete, btnEncryption;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class DeviceEditActivity extends AppCompatActivity {
         btnPassword = findViewById(R.id.btnPassword_deviceedit);
         btnSecondary = findViewById(R.id.btnSecondaryAccess_deviceedit);
         btnDelete = findViewById(R.id.btnDelete_deviceedit);
-
+        btnEncryption = findViewById(R.id.btnEncryption_deviceedit);
         btnName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,6 +55,14 @@ public class DeviceEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), DeviceEditDeleteActivity.class);
+                i.putExtra("dvc_id",dvc_id);
+                startActivity(i);
+            }
+        });
+        btnEncryption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), DeviceEditEncryptionActivity.class);
                 i.putExtra("dvc_id",dvc_id);
                 startActivity(i);
             }

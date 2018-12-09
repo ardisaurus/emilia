@@ -9,13 +9,16 @@ public class PrimaryDevice {
     private String dvc_name;
     @SerializedName("dvc_status")
     private String dvc_status;
+    @SerializedName("dvc_encryption")
+    private String dvc_encryption;
     @SerializedName("status")
     private String status;
 
-    public PrimaryDevice(String dvc_id, String dvc_name, String dvc_status) {
+    public PrimaryDevice(String dvc_id, String dvc_name, String dvc_status, String dvc_encryption, String status) {
         this.dvc_id = dvc_id;
         this.dvc_name = dvc_name;
         this.dvc_status = dvc_status;
+        this.dvc_encryption = dvc_encryption;
         this.status = status;
     }
 
@@ -41,6 +44,14 @@ public class PrimaryDevice {
 
     public void setDvc_status(String dvc_status) {
         this.dvc_status = dvc_status;
+    }
+
+    public String getDvc_encryption() {
+        return dvc_encryption;
+    }
+
+    public void setDvc_encryption(String dvc_encryption) {
+        this.dvc_encryption = dvc_encryption;
     }
 
     public String getStatus() {

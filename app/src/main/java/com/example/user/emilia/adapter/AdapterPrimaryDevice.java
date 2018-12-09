@@ -51,6 +51,16 @@ public class AdapterPrimaryDevice extends android.support.v7.widget.RecyclerView
         final String email = user.get(SessionManager.KEY_EMAIL);
         holder.dvc_id.setText(primarydevice.getDvc_id());
         holder.dvc_name.setText(primarydevice.getDvc_name());
+        String encryption = primarydevice.getDvc_encryption();
+        if (encryption.equals("3des")){
+            holder.dvc_encryption.setText("Encryption : RSA + 3DES");
+        }else if(encryption.equals("aes1")){
+            holder.dvc_encryption.setText("Encryption : RSA + AES 128bit");
+        }else if(encryption.equals("aes2")){
+            holder.dvc_encryption.setText("Encryption : RSA + AES 256bit");
+        }else{
+            holder.dvc_encryption.setText(primarydevice.getDvc_encryption());
+        }
         final ApiInterface mApiInterface;
         mApiInterface = ApiClient.getClient().create(ApiInterface.class);
         if (primarydevice.getDvc_status().equals("1")){
@@ -111,12 +121,13 @@ public class AdapterPrimaryDevice extends android.support.v7.widget.RecyclerView
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView dvc_id, dvc_name, dvc_status;
+        TextView dvc_id, dvc_name, dvc_status, dvc_encryption;
         Button btnUnlock, btnHistory, btnEdit;
         public ViewHolder(View itemView) {
             super(itemView);
             dvc_id = (TextView) itemView.findViewById(R.id.lblPrimaryDeviceid_list);
             dvc_name = (TextView) itemView.findViewById(R.id.lblPrimaryDeviceName_list);
+            dvc_encryption = (TextView) itemView.findViewById(R.id.lblPrimaryDeviceEncryption_list);
             dvc_status = (TextView) itemView.findViewById(R.id.lblPrimaryDeviceStatus_list);
             btnUnlock = itemView.findViewById(R.id.btnLockPrimaryDevice_list);
             btnHistory = itemView.findViewById(R.id.btnHistoryPrimaryDevice_list);

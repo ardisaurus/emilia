@@ -27,7 +27,7 @@ public class SettingActivity extends AppCompatActivity {
     SessionManager session;
     ApiInterface mApiInterface;
     private TextView lblEmail, lblName, lblDob;
-    private Button btnLogout, btnEmail, btnName, btnDob, btnPassword, btnDelete;
+    private Button btnLogout, btnEmail, btnName, btnDob, btnPassword, btnDelete, btnAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +65,7 @@ public class SettingActivity extends AppCompatActivity {
         btnDob = findViewById(R.id.btnDob_setting);
         btnPassword = findViewById(R.id.btnPassword_setting);
         btnDelete = findViewById(R.id.btnDelete_setting);
+        btnAddress = findViewById(R.id.btnAddress_Setting);
         btnLogout = findViewById(R.id.btnLogout_Setting);
 
         btnEmail.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +105,15 @@ public class SettingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), SettingDeleteActivity.class);
                 startActivity(i);
+            }
+        });
+
+        btnAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), AddressActivity.class);
+                startActivity(i);
+                finish();
             }
         });
 

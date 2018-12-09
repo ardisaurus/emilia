@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private FloatingActionButton btnAdd, btnRegistered;
     private EditText txtEmail_login, txtPassword_login;
-    private TextView lblForgotPassword_login, lblSignUp_login;
+    private TextView lblForgotPassword_login, lblSignUp_login, lblServerAddress_login;
     private Button btnLogin;
     private TabLayout tabLayout;
     ApiInterface mApiInterface;
@@ -270,6 +270,14 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(getApplicationContext(), ForgetAccountPasswordActivity.class);
+                    startActivity(i);
+                }
+            });
+            lblServerAddress_login = findViewById(R.id.lblServerAddress_login);
+            lblServerAddress_login.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getApplicationContext(), AddressActivity.class);
                     startActivity(i);
                 }
             });

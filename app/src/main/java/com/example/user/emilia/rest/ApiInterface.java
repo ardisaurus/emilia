@@ -104,7 +104,7 @@ public interface ApiInterface {
     @POST("memberdeviceman")
     Call<PostPrimaryDevice> postAuthPrimaryDevice( @Field("dvc_id") String dvc_id,
                                                    @Field("session_id") String session_id,
-                                                   @Field("cipher_aes") String cipher_aes,
+                                                   @Field("cipher_sym") String cipher_aes,
                                                    @Field("cipher_rsa") String cipher_rsa,
                                                    @Field("action") String action);
     @FormUrlEncoded
@@ -116,6 +116,17 @@ public interface ApiInterface {
     @POST("memberdeviceman")
     Call<PostPrimaryDevice> postIdcheckPrimaryDevice( @Field("dvc_id") String dvc_id,
                                                       @Field("action") String action);
+
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postEncryptionCheck( @Field("dvc_id") String dvc_id,
+                                                 @Field("action") String action);
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostPrimaryDevice> postEditEncrytionPrimaryDevice( @Field("dvc_id") String dvc_id,
+                                                            @Field("dvc_encryption") String dvc_encryption,
+                                                            @Field("action") String action,
+                                                            @Field("part") String part);
     @FormUrlEncoded
     @POST("memberdeviceman")
     Call<PostPrimaryDevice> postEditNamePrimaryDevice( @Field("dvc_id") String dvc_id,
@@ -143,6 +154,12 @@ public interface ApiInterface {
     Call<PostSecondaryDevice> postUnlockSecondaryDevice( @Field("email") String email,
                                                          @Field("dvc_id") String dvc_id,
                                                          @Field("action") String action);
+
+
+    @FormUrlEncoded
+    @POST("memberdeviceman")
+    Call<PostSecondaryDevice> postEncryptionCheckSecondary( @Field("dvc_id") String dvc_id,
+                                                          @Field("action") String action);
     @FormUrlEncoded
     @POST("memberdeviceman")
     Call<PostPrimaryDevice> postLockPrimaryDevice( @Field("email") String email,
@@ -173,7 +190,7 @@ public interface ApiInterface {
     @POST("memberdeviceman")
     Call<PostSecondaryDevice> postAuthSecondaryDevice( @Field("dvc_id") String dvc_id,
                                                        @Field("session_id") String session_id,
-                                                       @Field("cipher_aes") String cipher_aes,
+                                                       @Field("cipher_sym") String cipher_aes,
                                                        @Field("cipher_rsa") String cipher_rsa,
                                                        @Field("action") String action);
     @FormUrlEncoded

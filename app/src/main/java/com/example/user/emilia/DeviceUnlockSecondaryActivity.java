@@ -1,6 +1,8 @@
 package com.example.user.emilia;
 
 import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 import com.example.user.emilia.model.Crypto;
 import com.example.user.emilia.model.GetCrypto;
 import com.example.user.emilia.model.PostCrypto;
+import com.example.user.emilia.model.PostPrimaryDevice;
 import com.example.user.emilia.model.PostSecondaryDevice;
 import com.example.user.emilia.rest.ApiClient;
 import com.example.user.emilia.rest.ApiInterface;
@@ -56,42 +59,71 @@ public class DeviceUnlockSecondaryActivity extends AppCompatActivity {
                     if (txtPassword.getText().toString().isEmpty()){
                         Toast.makeText(DeviceUnlockSecondaryActivity.this, "Fill every available form", Toast.LENGTH_SHORT).show();
                     }else{
+                        final long timeStart = System.currentTimeMillis();
                         final String dvc_id = lblDvc_id.getText().toString();
                         final String password = txtPassword.getText().toString();
                         if (password.length()==16) {
                             Call<PostCrypto> postCryptoCall = mApiInterface.postRequest(dvc_id, "create");
                             postCryptoCall.enqueue(new Callback<PostCrypto>() {
+                                @RequiresApi(api = Build.VERSION_CODES.O)
                                 @Override
                                 public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
                                     String public_key= response.body().getmCrypto().getPublic_key();
                                     String modulo = response.body().getmCrypto().getModulo();
                                     final String session_id = response.body().getmCrypto().getSession_id();
-                                    String aes_key=Aes.getSaltString();;
-                                    final String cipheraes = Aes.encrypt(password, aes_key);
-                                    Call<GetCrypto> postCryptoCall = mApiInterface.getCrypto(session_id, aes_key);
-                                    postCryptoCall.enqueue(new Callback<GetCrypto>() {
+                                    final String aes_key=Aes.getSaltString();
+                                    Call<PostSecondaryDevice> postSecondaryDeviceCall = mApiInterface.postEncryptionCheckSecondary(dvc_id, "encryption_check");
+                                    postSecondaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
                                         @Override
-                                        public void onResponse(Call<GetCrypto> call, Response<GetCrypto> response) {
-                                            final List<Crypto> CryptoList = response.body().getListDataCrypto();
-                                            final String cipherrsa = CryptoList.get(0).getCipher();
-                                            Call<PostSecondaryDevice> postPrimaryDeviceCall = mApiInterface.postAuthSecondaryDevice(dvc_id, session_id, cipheraes, cipherrsa, "auth_sc");
-                                            postPrimaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
+                                        public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
+                                            final String dvc_encryption = response.body().getmSecondaryDevice().getDvc_encryption();
+                                            final String cipheraes = Aes.encrypt(password, aes_key, dvc_encryption);
+                                            Call<GetCrypto> postCryptoCall = mApiInterface.getCrypto(session_id, aes_key);
+                                            postCryptoCall.enqueue(new Callback<GetCrypto>() {
                                                 @Override
-                                                public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
-                                                    if(response.body().getmSecondaryDevice().getStatus().equals("success")){
-                                                        HashMap<String, String> user = session.getUserDetails();
-                                                        String email = user.get(SessionManager.KEY_EMAIL);
-                                                        Call<PostSecondaryDevice> postSecondaryDeviceCall = mApiInterface.postUnlockSecondaryDevice(email, dvc_id ,"unlock_sc");
-                                                        postSecondaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
-                                                            @Override
-                                                            public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
+                                                public void onResponse(Call<GetCrypto> call, Response<GetCrypto> response) {
+                                                    final List<Crypto> CryptoList = response.body().getListDataCrypto();
+                                                    final String cipherrsa = CryptoList.get(0).getCipher();
+                                                    Call<PostSecondaryDevice> postPrimaryDeviceCall = mApiInterface.postAuthSecondaryDevice(dvc_id, session_id, cipheraes, cipherrsa, "auth_sc");
+                                                    postPrimaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
+                                                        @Override
+                                                        public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
+                                                            if(response.body().getmSecondaryDevice().getStatus().equals("success")){
+                                                                HashMap<String, String> user = session.getUserDetails();
+                                                                String email = user.get(SessionManager.KEY_EMAIL);
+                                                                Call<PostSecondaryDevice> postSecondaryDeviceCall = mApiInterface.postUnlockSecondaryDevice(email, dvc_id ,"unlock_sc");
+                                                                postSecondaryDeviceCall.enqueue(new Callback<PostSecondaryDevice>() {
+                                                                    @Override
+                                                                    public void onResponse(Call<PostSecondaryDevice> call, Response<PostSecondaryDevice> response) {
+                                                                        Call<PostCrypto> postDeleteSessionCall = mApiInterface.postDeleteSession(session_id, "delete_session");
+                                                                        postDeleteSessionCall.enqueue(new Callback<PostCrypto>() {
+                                                                            @Override
+                                                                            public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
+                                                                                long timeEnd = System.currentTimeMillis();
+                                                                                long timeDiff = timeEnd-timeStart;
+                                                                                finish();
+                                                                                FragmentDeviceSecondary.fds.refresh();
+                                                                                Toast.makeText(MainActivity.ma, "Device Unlocked on " + timeDiff + "ms", Toast.LENGTH_SHORT).show();
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onFailure(Call<PostCrypto> call, Throwable t) {
+                                                                                Toast.makeText(DeviceUnlockSecondaryActivity.this, "Session not removed", Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        });
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
+                                                                        Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                });
+                                                            }else{
                                                                 Call<PostCrypto> postDeleteSessionCall = mApiInterface.postDeleteSession(session_id, "delete_session");
                                                                 postDeleteSessionCall.enqueue(new Callback<PostCrypto>() {
                                                                     @Override
                                                                     public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
-                                                                        finish();
-                                                                        FragmentDeviceSecondary.fds.refresh();
-                                                                        Toast.makeText(MainActivity.ma, "Device Unlocked", Toast.LENGTH_SHORT).show();
+                                                                        Toast.makeText(DeviceUnlockSecondaryActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
                                                                     }
 
                                                                     @Override
@@ -100,42 +132,28 @@ public class DeviceUnlockSecondaryActivity extends AppCompatActivity {
                                                                     }
                                                                 });
                                                             }
+                                                        }
 
-                                                            @Override
-                                                            public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
-                                                                Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
-                                                    }else{
-                                                        Call<PostCrypto> postDeleteSessionCall = mApiInterface.postDeleteSession(session_id, "delete_session");
-                                                        postDeleteSessionCall.enqueue(new Callback<PostCrypto>() {
-                                                            @Override
-                                                            public void onResponse(Call<PostCrypto> call, Response<PostCrypto> response) {
-                                                                Toast.makeText(DeviceUnlockSecondaryActivity.this, "Wrong password", Toast.LENGTH_SHORT).show();
-                                                            }
+                                                        @Override
+                                                        public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
+                                                            Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
 
-                                                            @Override
-                                                            public void onFailure(Call<PostCrypto> call, Throwable t) {
-                                                                Toast.makeText(DeviceUnlockSecondaryActivity.this, "Session not removed", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
-                                                    }
                                                 }
 
                                                 @Override
-                                                public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
+                                                public void onFailure(Call<GetCrypto> call, Throwable t) {
                                                     Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
                                                 }
                                             });
-
                                         }
 
                                         @Override
-                                        public void onFailure(Call<GetCrypto> call, Throwable t) {
+                                        public void onFailure(Call<PostSecondaryDevice> call, Throwable t) {
                                             Toast.makeText(DeviceUnlockSecondaryActivity.this, "Connection fail", Toast.LENGTH_SHORT).show();
                                         }
                                     });
-
                                 }
 
                                 @Override
